@@ -164,6 +164,23 @@ button {
   margin-bottom: 28px;
 }
 
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 248, 240, 0.12);
+  color: var(--hero-text);
+  border: 1px solid rgba(255, 248, 240, 0.16);
+}
+
+.avatar svg {
+  width: 23px;
+  height: 23px;
+}
+
 .theme-switch {
   display: inline-flex;
   align-items: center;
@@ -331,6 +348,11 @@ button {
   color: var(--accent);
   border: 1px solid rgba(31, 111, 255, 0.08);
   font-size: 1rem;
+}
+
+.project-icon svg {
+  width: 24px;
+  height: 24px;
 }
 
 .project-status {
