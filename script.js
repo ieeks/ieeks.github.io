@@ -14,7 +14,7 @@ const PROJECTS = [
     status: "Live",
   },
   {
-    title: "Ladefuchs ⚡",
+    title: "Wallbox",
     description: "EV charging cost & analytics",
     url: "https://ieeks.github.io/wallbox/",
     icon: "⚡",
@@ -42,13 +42,16 @@ function getStoredTheme() {
 function getPreferredTheme() {
   const stored = getStoredTheme();
   if (stored === "light" || stored === "dark") return stored;
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  return "light";
 }
 
 function setTheme(theme) {
   document.documentElement.setAttribute("data-theme", theme);
-  const label = document.querySelector(".theme-toggle-label");
-  if (label) label.textContent = theme === "dark" ? "Light" : "Dark";
+  const toggle = document.getElementById("themeToggle");
+  if (toggle) {
+    toggle.checked = theme === "dark";
+    toggle.setAttribute("aria-checked", theme === "dark" ? "true" : "false");
+  }
   try {
     localStorage.setItem(THEME_STORAGE_KEY, theme);
   } catch (error) {
@@ -104,7 +107,7 @@ function init() {
 
   const themeToggle = document.getElementById("themeToggle");
   if (themeToggle) {
-    themeToggle.addEventListener("click", toggleTheme);
+    themeToggle.addEventListener("change", toggleTheme);
   }
 }
 
