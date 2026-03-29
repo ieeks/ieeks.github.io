@@ -43,7 +43,7 @@ const PROJECTS = [
   {
     title: "Energy Dashboard",
     description: "Live smart meter insights",
-    url: "",
+    url: "https://ieeks.github.io/gmail-pdf-sync/",
     icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
   <polyline points="3 12 7 12 10 7 14 18 17 12 21 12"/>
 </svg>`,
