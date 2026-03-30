@@ -19,7 +19,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <!-- 3. CSS -->
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=2">
 </head>
 <body>
 
@@ -27,7 +27,7 @@
   <header>
     <nav>
       <a href="/" class="site-logo-link" aria-label="ieeks home">
-        <svg viewBox="0 0 100 100" aria-label="ieeks logo" role="img" class="site-logo-svg">
+        <svg width="36" height="36" viewBox="0 0 100 100" aria-label="ieeks logo" role="img" class="site-logo-svg">
           <rect x="10" y="10" width="80" height="80" fill="none" stroke="currentColor" stroke-width="3"/>
           <text x="50" y="62" text-anchor="middle" font-size="42" fill="currentColor" font-family="serif">ie</text>
         </svg>
@@ -37,10 +37,10 @@
         <li><a href="https://github.com/ieeks" target="_blank" rel="noreferrer">github</a></li>
         <li>
           <button aria-label="Theme wechseln" class="theme-toggle" onclick="toggleTheme()">
-            <svg class="icon-moon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <svg class="icon-moon" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-            <svg class="icon-sun" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <svg class="icon-sun" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <circle cx="12" cy="12" r="5"/>
               <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke-linecap="round"/>
             </svg>
@@ -62,7 +62,7 @@
 
       <a class="tool-card card-vat" href="https://ieeks.github.io/eu-vat-reihengeschaeftrechner/" target="_blank" rel="noreferrer">
         <span class="tool-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <rect x="5" y="3.5" width="14" height="17" rx="2.5"/>
             <line x1="8" y1="8" x2="16" y2="8"/>
             <line x1="8" y1="12" x2="11" y2="12"/>
@@ -82,7 +82,7 @@
 
       <a class="tool-card card-lf" href="https://ieeks.github.io/wallbox/" target="_blank" rel="noreferrer">
         <span class="tool-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <rect x="2" y="7" width="16" height="11" rx="2"/>
             <path d="M18 10.5h2a1 1 0 010 2h-2"/>
             <path d="M9 10l-2 3h5l-2 3"/>
@@ -99,7 +99,7 @@
 
       <a class="tool-card card-lego" href="https://ieeks.github.io/lego-tracker/" target="_blank" rel="noreferrer">
         <span class="tool-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <rect x="5" y="9" width="14" height="9" rx="2"/>
             <rect x="7" y="6" width="3" height="3" rx="1"/>
             <rect x="14" y="6" width="3" height="3" rx="1"/>
@@ -119,7 +119,7 @@
 
       <a class="tool-card card-energy" href="https://ieeks.github.io/gmail-pdf-sync/" target="_blank" rel="noreferrer">
         <span class="tool-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="3 12 7 12 10 7 14 18 17 12 21 12"/>
           </svg>
         </span>
@@ -154,13 +154,13 @@
       </div>
       <div class="footer-right">
         <a href="https://github.com/ieeks" target="_blank" rel="noreferrer">
-          <svg class="footer-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <svg class="footer-icon" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
           GitHub
         </a>
         <a href="mailto:hi@ieeks.at">
-          <svg class="footer-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <svg class="footer-icon" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M22 6l-10 7L2 6" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
