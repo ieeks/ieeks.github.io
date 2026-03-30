@@ -1,63 +1,177 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="de" data-theme="light">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Projects by Manuel</title>
-  <meta name="description" content="A collection of personal tools and experiments by Manuel.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ieeks — Manuel's Tools</title>
+  <meta name="description" content="Personal toolbox by Manuel, Vienna.">
+  <!-- 1. Dark Mode Init — MUSS vor CSS kommen, blocking -->
+  <script>
+    (function() {
+      var saved;
+      try { saved = localStorage.getItem('theme'); } catch(e) {}
+      if (!saved) saved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', saved);
+    })();
+  </script>
+  <!-- 2. Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- 3. CSS -->
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="page-shell">
-    <div class="ambient ambient-one" aria-hidden="true"></div>
-    <div class="ambient ambient-two" aria-hidden="true"></div>
 
-    <main class="container">
-      <section class="hero card">
-        <div class="hero-top">
-          <div class="avatar" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M8.5 8.5L4.5 12L8.5 15.5"/>
-              <path d="M15.5 8.5L19.5 12L15.5 15.5"/>
-              <path d="M13 6.5L11 17.5"/>
-            </svg>
-          </div>
-          <label class="theme-switch" for="themeToggle" aria-label="Toggle color mode">
-            <input class="theme-switch-input" id="themeToggle" type="checkbox" role="switch" aria-label="Toggle color mode">
-            <span class="theme-switch-track">
-              <span class="theme-switch-thumb"></span>
-            </span>
-          </label>
-        </div>
-
-        <div class="hero-copy">
-          <p class="eyebrow">Personal Workspace</p>
-          <h1>Projects by Manuel</h1>
-          <p class="subtitle">A collection of personal tools and experiments</p>
-        </div>
-      </section>
-
-      <section class="projects">
-        <div class="section-head">
-          <h2>Tools</h2>
-          <p>Selected apps, dashboards, and experiments.</p>
-        </div>
-        <div class="card-grid" id="projectGrid" aria-live="polite"></div>
-      </section>
-    </main>
-
-    <footer class="footer">
-      <a href="https://github.com/ieeks" target="_blank" rel="noreferrer" aria-label="GitHub profile">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M12 2C6.48 2 2 6.58 2 12.23c0 4.52 2.87 8.35 6.84 9.7.5.1.68-.22.68-.49 0-.24-.01-1.04-.01-1.89-2.78.62-3.37-1.21-3.37-1.21-.45-1.18-1.11-1.49-1.11-1.49-.91-.64.07-.63.07-.63 1 .08 1.53 1.06 1.53 1.06.89 1.57 2.34 1.12 2.91.86.09-.66.35-1.12.63-1.38-2.22-.26-4.56-1.14-4.56-5.08 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.72 0 0 .84-.28 2.75 1.05A9.35 9.35 0 0 1 12 6.92c.85 0 1.71.12 2.51.36 1.91-1.33 2.75-1.05 2.75-1.05.55 1.42.2 2.46.1 2.72.64.72 1.03 1.63 1.03 2.75 0 3.95-2.35 4.81-4.59 5.07.36.32.68.95.68 1.92 0 1.38-.01 2.5-.01 2.84 0 .27.18.6.69.49A10.26 10.26 0 0 0 22 12.23C22 6.58 17.52 2 12 2Z"/>
+<div class="container">
+  <header>
+    <nav>
+      <a href="/" class="site-logo-link" aria-label="ieeks home">
+        <svg viewBox="0 0 100 100" aria-label="ieeks logo" role="img" class="site-logo-svg">
+          <rect x="10" y="10" width="80" height="80" fill="none" stroke="currentColor" stroke-width="3"/>
+          <text x="50" y="62" text-anchor="middle" font-size="42" fill="currentColor" font-family="serif">ie</text>
         </svg>
       </a>
-    </footer>
-  </div>
+      <ul class="nav-right">
+        <li><a href="#tools">tools</a></li>
+        <li><a href="https://github.com/ieeks" target="_blank" rel="noreferrer">github</a></li>
+        <li>
+          <button aria-label="Theme wechseln" class="theme-toggle" onclick="toggleTheme()">
+            <svg class="icon-moon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <svg class="icon-sun" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="5"/>
+              <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </li>
+      </ul>
+    </nav>
+  </header>
 
-  <script src="./script.js"></script>
+  <section class="intro">
+    <div class="intro-eyebrow">MANUEL · VIENNA</div>
+    <h1 class="intro-heading" id="scramble-heading" data-text="personal toolbox~">personal toolbox~</h1>
+    <p class="intro-bio">A small collection of <strong>tools I built for myself</strong> — for work, for home, for family. EU VAT calculations, EV charging logs, LEGO tracking. Nothing fancy, everything useful.</p>
+  </section>
+
+  <section class="tools-section" id="tools">
+    <div class="section-label">Tools</div>
+    <div class="tools-grid">
+
+      <a class="tool-card card-vat" href="https://ieeks.github.io/eu-vat-reihengeschaeftrechner/" target="_blank" rel="noreferrer">
+        <span class="tool-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="3.5" width="14" height="17" rx="2.5"/>
+            <line x1="8" y1="8" x2="16" y2="8"/>
+            <line x1="8" y1="12" x2="11" y2="12"/>
+            <line x1="13.5" y1="11" x2="16.5" y2="14"/>
+            <line x1="16.5" y1="11" x2="13.5" y2="14"/>
+            <line x1="8" y1="16" x2="11" y2="16"/>
+          </svg>
+        </span>
+        <div class="tool-name">VAT Calculator</div>
+        <div class="tool-type">EU Tax · Reihengeschäft</div>
+        <div class="tool-desc">Chain transaction analysis across EU member states. Tax codes, UID validation, SAP mapping.</div>
+        <div class="tool-footer">
+          <span class="tool-status"><span class="dot live"></span>live</span>
+          <span class="tool-arrow">↗</span>
+        </div>
+      </a>
+
+      <a class="tool-card card-lf" href="https://ieeks.github.io/wallbox/" target="_blank" rel="noreferrer">
+        <span class="tool-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="7" width="16" height="11" rx="2"/>
+            <path d="M18 10.5h2a1 1 0 010 2h-2"/>
+            <path d="M9 10l-2 3h5l-2 3"/>
+          </svg>
+        </span>
+        <div class="tool-name">Wallbox</div>
+        <div class="tool-type">EV Charging · Firebase</div>
+        <div class="tool-desc">Home charging tracker for BYD Seal U. go-e CSV import, Wien Energie tariffs, Firestore sync.</div>
+        <div class="tool-footer">
+          <span class="tool-status"><span class="dot live"></span>live</span>
+          <span class="tool-arrow">↗</span>
+        </div>
+      </a>
+
+      <a class="tool-card card-lego" href="https://ieeks.github.io/lego-tracker/" target="_blank" rel="noreferrer">
+        <span class="tool-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="9" width="14" height="9" rx="2"/>
+            <rect x="7" y="6" width="3" height="3" rx="1"/>
+            <rect x="14" y="6" width="3" height="3" rx="1"/>
+            <line x1="9" y1="13" x2="9" y2="13"/>
+            <line x1="12" y1="13" x2="12" y2="13"/>
+            <line x1="15" y1="13" x2="15" y2="13"/>
+          </svg>
+        </span>
+        <div class="tool-name">LEGO Tracker</div>
+        <div class="tool-type">Family · Wishlist</div>
+        <div class="tool-desc">Wishlist and collection tracker built for grandparents. No login, simple interface.</div>
+        <div class="tool-footer">
+          <span class="tool-status"><span class="dot live"></span>live</span>
+          <span class="tool-arrow">↗</span>
+        </div>
+      </a>
+
+      <a class="tool-card card-energy" href="https://ieeks.github.io/gmail-pdf-sync/" target="_blank" rel="noreferrer">
+        <span class="tool-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 12 7 12 10 7 14 18 17 12 21 12"/>
+          </svg>
+        </span>
+        <div class="tool-name">Energy Dashboard</div>
+        <div class="tool-type">Home · Analytics</div>
+        <div class="tool-desc">Electricity consumption overview. Tariff comparison, monthly trends, cost breakdown.</div>
+        <div class="tool-footer">
+          <span class="tool-status"><span class="dot wip"></span>in progress</span>
+          <span class="tool-arrow">↗</span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <div class="stack-block">
+    <div class="stack-label">Stack</div>
+    <p>All tools are <code>single-file HTML</code> — no build step, no framework. Deployed via <code>GitHub Pages</code>. Sync via <code>Firebase Firestore</code> where needed.</p>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-left">
+        <span>Vienna, AT · <span id="current-time">--:--</span> CET</span>
+        <span>built for everyday life</span>
+      </div>
+      <div class="footer-center">
+        <div class="monogram" aria-hidden="true">ie</div>
+        <span class="footer-copy">© 2026</span>
+      </div>
+      <div class="footer-right">
+        <a href="https://github.com/ieeks" target="_blank" rel="noreferrer">
+          <svg class="footer-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          GitHub
+        </a>
+        <a href="mailto:hi@ieeks.at">
+          <svg class="footer-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M22 6l-10 7L2 6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Mail
+        </a>
+      </div>
+    </div>
+    <a class="back-to-top" href="#">↑ back to top</a>
+  </div>
+</footer>
+
+<script src="script.js"></script>
 </body>
 </html>
