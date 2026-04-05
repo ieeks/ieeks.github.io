@@ -358,10 +358,11 @@ nav {
 }
 
 /* Per-card stripe colors */
-.card-vat    { --tool-color: #c44b28; }
-.card-lf     { --tool-color: #22c55e; }
-.card-lego   { --tool-color: #f59e0b; }
-.card-energy { --tool-color: #6366f1; }
+.card-vat     { --tool-color: #c44b28; }
+.card-lf      { --tool-color: #22c55e; }
+.card-lego    { --tool-color: #f59e0b; }
+.card-energy  { --tool-color: #6366f1; }
+.card-receipt { --tool-color: #8b5cf6; }
 
 /* ---- Stack ---- */
 
