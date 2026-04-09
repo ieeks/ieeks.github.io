@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Reihengeschäftsrechner v4</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- v3.2 CSS compatibility layer -->
+
+
+
+  <link rel="stylesheet" href="./assets/styles/app.css?v=dev">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     HEADER
+═══════════════════════════════════════════════════════════════════════ -->
+<header>
+  <span class="h-title">Reihengeschäftsrechner</span>
+  <span class="h-ver" id="versionBadge">v4.0</span>
+  <div class="h-div"></div>
+  <div class="co-pill" id="companyPill">
+    <button class="active" onclick="setCompany('EPDE',this)">EPDE</button>
+    <button onclick="setCompany('EPROHA',this)">EPROHA</button>
+  </div>
+  <div class="h-div"></div>
+  <button class="expert-toggle" id="expertToggle" onclick="toggleExpert()">
+    <span class="expert-dot"></span>Experten-Modus
+  </button>
+  <span class="bmf-pill" id="bmfPill" title="BMF-Abgleich Quellenstand">⚖ BMF: …</span>
+  <div class="h-spacer"></div>
+  <div class="live-badge"><span class="live-dot"></span>Live</div>
+  <div class="h-overflow-wrap">
+    <button class="h-overflow-btn" onclick="toggleOverflowMenu()" title="Weitere Optionen" aria-haspopup="true" aria-expanded="false" id="overflowBtn">⋯</button>
+    <div class="h-overflow-menu" id="overflowMenu" role="menu">
+      <button class="h-overflow-item" onclick="toggleTheme();closeOverflow()" role="menuitem"><span>☀</span>Hell / Dunkel</button>
+      <button class="h-overflow-item" onclick="shareLink();closeOverflow()" role="menuitem"><span>🔗</span>Link teilen</button>
+      <button class="h-overflow-item" onclick="exportPDF();closeOverflow()" role="menuitem"><span>📄</span>PDF exportieren</button>
+      <button class="h-overflow-item" onclick="toggleDevMode();closeOverflow()" role="menuitem" id="devModeBtn"><span>🏷</span>Dev Mode</button>
+      <button class="h-overflow-item" onclick="openTests();closeOverflow()" role="menuitem"><span>⚙</span>Tests</button>
+      <button class="h-overflow-item danger" onclick="resetAll();closeOverflow()" role="menuitem"><span>↺</span>Zurücksetzen</button>
+    </div>
+  </div>
+</header>
+
+<!-- Changelog banner -->
+<div id="changelogBanner" style="display:none;padding:10px 14px 0;"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     APP — 50/50 SPLIT
+═══════════════════════════════════════════════════════════════════════ -->
+<!-- Bridge elements for v3.2 analyze() compatibility -->
+<div id="result" style="display:none">
+  <div id="resultContent"></div>
+  <div id="resultContextBar" data-component="resultContextBar"></div>
+</div>
+<select id="s1" style="display:none"></select>
+<select id="s2" style="display:none"></select>
+<select id="s3" style="display:none"></select>
+<select id="s4" style="display:none"></select>
+<select id="dep" style="display:none"></select>
+<select id="dest" style="display:none"></select>
+
+<div class="app">
+
+  <!-- ══ LEFT: INPUT ══════════════════════════════════════════════════════ -->
+  <div class="pane-left">
+    <div class="pane-left-scroll">
+
+      <!-- Struktur -->
+      <div class="sec" id="strukturSec" data-component="input.Structur">
+        <div class="sec-hdr">👥 Struktur</div>
+        <div class="sec-body">
+          <div class="sub">Wie viele Parteien?</div>
+          <div id="partyRow">
+            <div style="display:flex;gap:6px;margin-bottom:6px;" id="partyTopRow">
+              <button class="party-btn" id="partyBtn2" onclick="setParties(2,this)">2</button>
+              <button class="party-btn active" id="partyBtn3" onclick="setParties(3,this)">3</button>
+              <button class="party-btn" id="partyBtn4" onclick="setParties(4,this)">4</button>
+            </div>
+            <button class="party-btn" id="partyBtn5" onclick="setParties(5,this)" style="width:100%;font-size:0.78rem;">🔧 Lohnveredelung</button>
+          </div>
+          <!-- Me-Position (4P only, hidden by default) -->
+          <div id="mePosSection" style="display:none;margin-top:10px;">
+            <div class="sub">Meine Position in der Kette</div>
+            <div class="me-pos-row">
+              <button class="me-pos-btn active" data-pos="2" onclick="setMePos(this)">B · 1. Zwischenhändler</button>
+              <button class="me-pos-btn" data-pos="3" onclick="setMePos(this)">C · 2. Zwischenhändler</button>
+            </div>
+          </div>
+          <!-- EuG T-646/24 hint — now as info icon next to 4P button, not separate block -->
+          <div id="eugHintBox" style="display:none;"></div>
+        </div>
+      </div>
+
+      <!-- Warenkette -->
+      <div class="sec" data-component="input.Warenkette">
+        <div class="sec-hdr">🔗 Warenkette</div>
+        <div class="sec-body">
+          <div class="sub">Länder der Parteien</div>
+          <div class="pickers-row" id="countryPickers"></div>
+          <div class="chain-bar" id="chainBar"></div>
+        </div>
+      </div>
+
+      <!-- Transport -->
+      <div class="sec" data-component="input.Transport">
+        <div class="sec-hdr">🚛 Transport</div>
+        <div class="sec-body">
+          <div class="sub">Wer organisiert den Transport?</div>
+          <div class="transport-list" id="transportList"></div>
+        </div>
+      </div>
+
+      <!-- UID Override (contextual, only when transport=middle) -->
+      <div id="uidOverrideSection" style="display:none;" data-component="input.UidOverride">
+        <!-- filled by renderUidOverride() -->
+      </div>
+
+      <!-- Analyse-Optionen (context-sensitive, no static options box) -->
+      <div id="contextToggles" data-component="input.AnalyseOptionen"></div>
+
+      <!-- Lohnveredelung panel (Modus 5 — shown when currentMode===5) -->
+      <div id="lohnPanel" style="display:none;" data-component="input.Lohnveredelung">
+        <div class="sec">
+          <div class="sec-hdr">🔧 Lohnveredelung — Modus 5</div>
+          <div class="sec-body">
+            <div class="sub" style="margin-bottom:6px;">Rohmaterial → Converter (Veredelung) → Kunde</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+              <div>
+                <div class="sub" style="margin-bottom:4px;">Einkaufsland (Lieferant Rohmaterial)</div>
+                <div style="position:relative;">
+                  <span id="lohn-flag-sup" style="position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:1rem;pointer-events:none;z-index:1;"></span>
+                  <select id="lohnSup" onchange="onLohnChange()" style="width:100%;padding:7px 10px 7px 32px;background:var(--surface-3);border:1px solid var(--border);border-radius:var(--r);color:var(--tx-1);font-size:0.8rem;appearance:none;outline:none;transition:border-color 0.15s;"></select>
+                </div>
+              </div>
+              <div>
+                <div class="sub" style="margin-bottom:4px;">Veredelungsland (Converter)</div>
+                <div style="position:relative;">
+                  <span id="lohn-flag-con" style="position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:1rem;pointer-events:none;z-index:1;"></span>
+                  <select id="lohnCon" onchange="onLohnChange()" style="width:100%;padding:7px 10px 7px 32px;background:var(--surface-3);border:1px solid var(--border);border-radius:var(--r);color:var(--tx-1);font-size:0.8rem;appearance:none;outline:none;transition:border-color 0.15s;"></select>
+                </div>
+              </div>
+            </div>
+            <div id="lohnCusBlock" style="margin-bottom:10px;">
+              <div class="sub" style="margin-bottom:4px;">Verkaufsland (Kunde)</div>
+              <div style="position:relative;">
+                <span id="lohn-flag-cus" style="position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:1rem;pointer-events:none;z-index:1;"></span>
+                <select id="lohnCus" onchange="onLohnChange()" style="width:100%;padding:7px 10px 7px 32px;background:var(--surface-3);border:1px solid var(--border);border-radius:var(--r);color:var(--tx-1);font-size:0.8rem;appearance:none;outline:none;transition:border-color 0.15s;"></select>
+              </div>
+            </div>
+            <div class="sub" style="margin-bottom:6px;">Liefert Lieferant direkt zum Converter? (kein Zwischenstopp bei mir)</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+              <button id="lohnDirektBtn" class="party-btn active" onclick="setLohnDirekt(true)" style="font-size:0.78rem;padding:9px 8px;white-space:normal;line-height:1.3;">Ja · Direktlieferung</button>
+              <button id="lohnUeberMichBtn" class="party-btn" onclick="setLohnDirekt(false)" style="font-size:0.78rem;padding:9px 8px;white-space:normal;line-height:1.3;">Nein · Ware läuft über mich</button>
+            </div>
+            <div class="sub" style="margin-bottom:6px;">Kommt die Ware nach Veredelung zurück zu dir? (Art. 17 Abs. 2 lit. f MwStSystRL)</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <button id="lohnRueckJaBtn" class="party-btn active" onclick="setLohnRueck(true)" style="font-size:0.78rem;padding:9px 8px;white-space:normal;line-height:1.3;">Ja · Ware kommt zurück</button>
+              <button id="lohnRueckNeinBtn" class="party-btn" onclick="setLohnRueck(false)" style="font-size:0.78rem;padding:9px 8px;white-space:normal;line-height:1.3;">Nein · Ware geht direkt zum Kunden</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- UID Status (reference, collapsible — moved to bottom) -->
+      <div class="sec" id="uidSec" data-component="input.UidStatus">
+        <button class="uid-hdr-btn" onclick="toggleUIDs()">
+          <span class="uid-hdr-label">🆔 UID-Status</span>
+          <span class="uid-hdr-chips" id="uidChips"></span>
+          <span class="uid-chevron" id="uidChevron">▾</span>
+        </button>
+        <div class="uid-body" id="uidBody">
+          <div class="uid-body-inner">
+            <div id="uidList"></div>
+            <div id="uidAllSection"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ RIGHT: RESULT ════════════════════════════════════════════════════ -->
+  <div class="pane-right">
+
+    <!-- Tab bar (expert mode) -->
+    <div class="pane-right-tabs" id="tabBar" style="display:none">
+      <button class="tab-btn active" onclick="switchTab('basis',this)" role="tab">📋 Ergebnis</button>
+      <button class="tab-btn" onclick="switchTab('begrundung',this)" role="tab">📝 Begründung & Recht</button>
+      <button class="tab-btn" onclick="switchTab('invoice',this)" role="tab">📄 Rechnung & Pflichten</button>
+      <button class="tab-btn" onclick="switchTab('melde',this)" role="tab">📅 Meldepflichten</button>
+      <button class="tab-btn tab-btn-vergleich" id="tabBtnVergleich" onclick="switchTab('vergleich',this)" role="tab" style="display:none">⚖ Vergleich</button>
+    </div>
+
+    <div class="pane-right-body">
+      <div class="tab-panel active" id="tab-basis"></div>
+      <div class="tab-panel" id="tab-begrundung"></div>
+      <div class="tab-panel" id="tab-invoice"></div>
+      <div class="tab-panel" id="tab-melde"></div>
+      <div class="tab-panel" id="tab-vergleich"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     TEST MODAL (reused from v3.2)
+═══════════════════════════════════════════════════════════════════════ -->
+<div id="testModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;overflow-y:auto;">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);max-width:800px;margin:40px auto;padding:20px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <span style="font-weight:700;font-size:0.9rem;">⚙ Test-Panel</span>
+      <button onclick="closeTests()" style="background:none;border:none;color:var(--tx-2);font-size:1.2rem;cursor:pointer;">✕</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:14px;">
+      <button class="h-btn" onclick="runSmokeTests()">▶ Smoke Tests</button>
+      <button class="h-btn" onclick="runRenderTests()">▶ Render Tests</button>
+      <button class="h-btn" onclick="runOutputTests()">▶ Output Tests</button>
+      <button class="h-btn" onclick="runInvariantTests()">▶ Invarianten</button>
+    </div>
+    <div id="testOutput" style="font-family:var(--mono);font-size:0.72rem;color:var(--tx-2);max-height:500px;overflow-y:auto;"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     VERGLEICH SWITCH MODAL
+═══════════════════════════════════════════════════════════════════════ -->
+<div id="vergleichSwitchModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200;align-items:center;justify-content:center;">
+  <div style="background:var(--surface);border:1px solid var(--border-md);border-radius:var(--r-lg);max-width:420px;width:calc(100% - 32px);padding:22px;box-shadow:var(--shadow-3);">
+    <div style="font-weight:700;font-size:0.85rem;margin-bottom:8px;">⚖ Szenario wechseln?</div>
+    <div id="vergleichSwitchDesc" style="font-size:0.75rem;color:var(--tx-2);margin-bottom:18px;line-height:1.6;"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button class="h-btn" onclick="closeVergleichModal()" style="background:none;">Abbrechen</button>
+      <button class="h-btn" id="vergleichSwitchConfirm" style="background:var(--blue);color:#fff;border-color:var(--blue);">Wechseln &amp; neu berechnen</button>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     PROPERTY TEST FRAMEWORK
+     Aufruf: Tastenkombination Ctrl+Shift+T oder URL-Parameter ?test=1
+     Testet steuerrechtliche Invarianten über alle EU-Länderkombinationen.
+     ════════════════════════════════════════════════════════════════════ -->
+<div id="testPanel" style="display:none; position:fixed; inset:0; z-index:9999;
+  background:rgba(10,12,18,0.97); overflow:auto; font-family:'IBM Plex Mono',monospace;">
+  <div style="max-width:900px; margin:0 auto; padding:32px 20px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px;">
+      <div>
+        <div style="font-size:1.3rem; font-weight:700; color:#e2e8f0;">🧪 Property Test Suite</div>
+        <div style="font-size:0.72rem; color:#64748b; margin-top:4px;">Steuerrechtliche Invarianten · EU Reihengeschäft Engine</div>
+      </div>
+      <button onclick="document.getElementById('testPanel').style.display='none'"
+        style="background:#1e293b; border:1px solid #334155; color:#94a3b8; padding:8px 16px;
+        border-radius:6px; cursor:pointer; font-family:inherit; font-size:0.8rem;">✕ Schließen</button>
+    </div>
+    <div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
+      <button onclick="runAllTests()" id="testRunBtn"
+        style="background:#3b82f6; border:none; color:#fff; padding:10px 20px;
+        border-radius:6px; cursor:pointer; font-family:inherit; font-size:0.85rem; font-weight:600;">
+        ▶ Alle Tests ausführen
+      </button>
+      <button onclick="runAllTests('EPDE')" 
+        style="background:#1e293b; border:1px solid #334155; color:#94a3b8; padding:10px 16px;
+        border-radius:6px; cursor:pointer; font-family:inherit; font-size:0.8rem;">
+        EPDE only
+      </button>
+      <button onclick="runAllTests('EPROHA')"
+        style="background:#1e293b; border:1px solid #334155; color:#94a3b8; padding:10px 16px;
+        border-radius:6px; cursor:pointer; font-family:inherit; font-size:0.8rem;">
+        EPROHA only
+      </button>
+      <button onclick="runSmokeTests()"
+        style="background:#7c3aed; border:none; color:#fff; padding:10px 16px;
+        border-radius:6px; cursor:pointer; font-family:inherit; font-size:0.8rem; font-weight:600;">
+        📚 Lehrfall-Tests
+      </button>
+      <button onclick="runRenderTests()"
+        style="background:#0e7490; border:none; color:#fff; padding:10px 16px;
+        border-radius:6px; cursor:pointer; font-family:inherit; font-size:0.8rem; font-weight:600;">
+        🔬 Render-Tests
+      </button>
+      <button onclick="runOutputTests()"
+        style="background:#065f46; border:none; color:#fff; padding:10px 16px;
+        border-radius:6px; cursor:pointer; font-family:inherit; font-size:0.8rem; font-weight:600;">
+        🧩 Output-Tests
+      </button>
+      <div id="testProgress" style="display:none; align-items:center; gap:10px; color:#64748b; font-size:0.78rem;">
+        <div id="testProgressBar" style="width:200px; height:6px; background:#1e293b; border-radius:3px; overflow:hidden;">
+          <div id="testProgressFill" style="height:100%; width:0%; background:#3b82f6; transition:width 0.1s;"></div>
+        </div>
+        <span id="testProgressText">0 / 0</span>
+      </div>
+    </div>
+    <div id="testSummary" style="display:none; padding:16px; border-radius:8px; margin-bottom:20px;
+      font-size:0.85rem; font-weight:600;"></div>
+    <div id="testResults" style="display:flex; flex-direction:column; gap:8px;"></div>
+  </div>
+</div>
+
+
+
+
+  <script src="./assets/scripts/app.js?v=dev"></script>
+</body>
+</html>
