@@ -11040,14 +11040,30 @@ function buildQuickCheck() {
     l1.sapNote  = 'EUSt-Bescheid dient als Vorsteuerbeleg';
     l1.reqs     = ['Zollanmeldung', 'EUSt-Bescheid als Vorsteuerbeleg', 'EORI-Nummer'];
     l1.regRisk  = null;
+  } else if (dep === dest) {
+    // Inland — Ware bleibt im selben Land, kein ig. Vorgang
+    const rate    = _qcRate(dep);
+    const hasUID  = !!vatIds[dep] || dep === home;
+    const sapEntry = SAP_TAX_MAP[company]?.[dep]?.['domestic'] || SAP_TAX_MAP[company]?.[home]?.['domestic'];
+    l1.type    = 'domestic';
+    l1.title   = `Inlandslieferung — steuerpflichtig ${_qcCountryName(dep)} ${rate} %`;
+    l1.taxInfo = `${rate} % ${dep}-MwSt (Inlandslieferung)`;
+    l1.sapCode = hasUID ? (sapEntry?.in || null) : null;
+    l1.sapDesc = hasUID ? (sapEntry?.desc || null) : null;
+    l1.sapNote = hasUID ? null : `Kein SAP-Kennzeichen — ${company} hat keine ${dep}-UID`;
+    l1.reqs    = [`Eingangsrechnung mit ${rate} % ${dep}-MwSt`, `UID ${company} (${dep})`];
+    l1.regRisk = hasUID ? null : dep;
   } else if (movingL1) {
-    const sapEntry = SAP_TAX_MAP[company]?.[home]?.['ic-acquisition'];
+    // ig. Erwerb — wenn EPDE/EPROHA UID im Abgangsland hat, dep-Land-Code verwenden
+    const sapCountry = (vatIds[dep] && SAP_TAX_MAP[company]?.[dep]?.['ic-acquisition'])
+      ? dep : home;
+    const sapEntry = SAP_TAX_MAP[company]?.[sapCountry]?.['ic-acquisition'];
     l1.type    = 'ig-erwerb';
     l1.title   = 'Steuerfreie EU-Lieferung (ig. Lieferung)';
     l1.taxInfo = '0 % — ig. Lieferung durch Lieferant';
     l1.sapCode = sapEntry?.in || null;
     l1.sapDesc = sapEntry?.desc || null;
-    l1.reqs    = [`UID Lieferant (${dep})`, `UID ${company} (${home})`, 'Hinweis auf Steuerfreiheit', 'Gelangensbestätigung'];
+    l1.reqs    = [`UID Lieferant (${dep})`, `UID ${company} (${sapCountry})`, 'Hinweis auf Steuerfreiheit', 'Gelangensbestätigung'];
     l1.regRisk = null;
   } else {
     // ruhende L1 → steuerpflichtig im Abgangsland (dep)
@@ -11119,6 +11135,10 @@ function buildQuickCheck() {
 function renderQuickCheck() {
   const el = $('tab-quickcheck');
   if (!el) return;
+
+  // Show back-bar only in non-expert mode
+  const backBar = $('qcBackBar');
+  if (backBar) backBar.style.display = expertMode ? 'none' : 'flex';
 
   const { company, dep, dest, transport } = qcState;
 

@@ -29,6 +29,7 @@
   <button class="expert-toggle" id="expertToggle" onclick="toggleExpert()">
     <span class="expert-dot"></span>Experten-Modus
   </button>
+  <button class="tab-btn qc-header-btn" onclick="switchTab('quickcheck',this);renderQuickCheck()">🟢 Quick Check</button>
   <span class="bmf-pill" id="bmfPill" title="BMF-Abgleich Quellenstand">⚖ BMF: …</span>
   <div class="h-spacer"></div>
   <div class="live-badge"><span class="live-dot"></span>Live</div>
@@ -186,9 +187,9 @@
   <!-- ══ RIGHT: RESULT ════════════════════════════════════════════════════ -->
   <div class="pane-right">
 
-    <!-- Quick Check Tab (always visible) -->
-    <div class="qc-bar">
-      <button class="tab-btn qc-tab-btn" onclick="switchTab('quickcheck',this);renderQuickCheck()">🟢 Quick Check</button>
+    <!-- Back-bar for Quick Check (non-expert mode) -->
+    <div class="qc-bar" id="qcBackBar" style="display:none">
+      <button class="tab-btn active" id="qcBasisBtn" onclick="switchTab('basis',this);document.getElementById('qcBackBar').style.display='none'">← Ergebnis</button>
     </div>
 
     <!-- Tab bar (expert mode) -->

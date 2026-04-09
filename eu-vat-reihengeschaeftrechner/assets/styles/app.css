@@ -2306,21 +2306,35 @@ header {
    SECTION Z · Quick Check Tab
 ═══════════════════════════════════════════════════════════════════════ */
 
-/* Always-visible QC tab bar */
+/* QC Header Button */
+.qc-header-btn {
+  padding: 5px 11px;
+  border-radius: var(--r);
+  border: 1px solid rgba(63,185,80,0.35);
+  background: var(--green-dim);
+  color: var(--green);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.12s;
+  line-height: 1;
+}
+.qc-header-btn:hover { background: rgba(63,185,80,0.18); }
+.qc-header-btn.active {
+  background: var(--green);
+  color: #fff;
+  border-color: var(--green);
+}
+
+/* Back bar (non-expert mode) */
 .qc-bar {
-  padding: 8px 10px 0;
+  padding: 6px 10px;
   border-bottom: 1px solid var(--border);
   background: var(--surface);
   flex-shrink: 0;
-}
-.qc-tab-btn {
-  color: var(--green);
-  border-color: transparent;
-}
-.qc-tab-btn.active {
-  color: var(--green);
-  border-bottom-color: var(--green);
-  background: var(--green-dim);
+  align-items: center;
+  gap: 6px;
 }
 
 /* Scroll wrapper */
