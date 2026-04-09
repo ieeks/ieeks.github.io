@@ -186,6 +186,11 @@
   <!-- ══ RIGHT: RESULT ════════════════════════════════════════════════════ -->
   <div class="pane-right">
 
+    <!-- Quick Check Tab (always visible) -->
+    <div class="qc-bar">
+      <button class="tab-btn qc-tab-btn" onclick="switchTab('quickcheck',this);renderQuickCheck()">🟢 Quick Check</button>
+    </div>
+
     <!-- Tab bar (expert mode) -->
     <div class="pane-right-tabs" id="tabBar" style="display:none">
       <button class="tab-btn active" onclick="switchTab('basis',this)" role="tab">📋 Ergebnis</button>
@@ -196,6 +201,7 @@
     </div>
 
     <div class="pane-right-body">
+      <div class="tab-panel" id="tab-quickcheck"></div>
       <div class="tab-panel active" id="tab-basis"></div>
       <div class="tab-panel" id="tab-begrundung"></div>
       <div class="tab-panel" id="tab-invoice"></div>

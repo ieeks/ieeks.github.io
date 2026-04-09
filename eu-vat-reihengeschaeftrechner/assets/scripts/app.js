@@ -10999,6 +10999,247 @@ function handleURLParams() {
   if (p.get('theme')) document.documentElement.setAttribute('data-theme', p.get('theme'));
 }
 
+// ═══════════════════════════════════════════════════════════════════════
+//  QUICK CHECK — Phase 1: 3-Parteien-Modus
+//  Eigener State, völlig unabhängig vom Haupt-Formular.
+// ═══════════════════════════════════════════════════════════════════════
+
+let qcState = { company: 'EPDE', dep: 'DE', dest: 'PL', transport: 'supplier' };
+
+// Länder alphabetisch sortiert (EU-27 + CH + GB)
+const QC_COUNTRIES = EU.slice().sort((a, b) => a.name.localeCompare(b.name, 'de'));
+
+function _qcCountryName(code) {
+  return EU.find(x => x.code === code)?.name || code;
+}
+function _qcRate(code) {
+  return EU.find(x => x.code === code)?.std;
+}
+function _qcIsEU(code) {
+  return code !== 'CH' && code !== 'GB';
+}
+
+function buildQuickCheck() {
+  const { company, dep, dest, transport } = qcState;
+  const vatIds = COMPANIES[company].vatIds;
+  const home   = COMPANIES[company].home;
+
+  // ── Step 1: Bewegte Lieferung ─────────────────────────────────────────
+  const movingL1     = transport !== 'customer';
+  const art36aHint   = transport === 'middle' && !!vatIds[dep];
+  const depIsThird   = !_qcIsEU(dep);
+  const destIsThird  = !_qcIsEU(dest);
+
+  // ── Step 2+3: L1 (Eingangsrechnung — Lieferant → Company) ────────────
+  const l1 = {};
+  if (depIsThird) {
+    l1.type     = 'import';
+    l1.title    = `Einfuhr aus ${_qcCountryName(dep)}`;
+    l1.taxInfo  = 'Einfuhrumsatzsteuer (EUSt)';
+    l1.sapCode  = null;
+    l1.sapNote  = 'EUSt-Bescheid dient als Vorsteuerbeleg';
+    l1.reqs     = ['Zollanmeldung', 'EUSt-Bescheid als Vorsteuerbeleg', 'EORI-Nummer'];
+    l1.regRisk  = null;
+  } else if (movingL1) {
+    const sapEntry = SAP_TAX_MAP[company]?.[home]?.['ic-acquisition'];
+    l1.type    = 'ig-erwerb';
+    l1.title   = 'Steuerfreie EU-Lieferung (ig. Lieferung)';
+    l1.taxInfo = '0 % — ig. Lieferung durch Lieferant';
+    l1.sapCode = sapEntry?.in || null;
+    l1.sapDesc = sapEntry?.desc || null;
+    l1.reqs    = [`UID Lieferant (${dep})`, `UID ${company} (${home})`, 'Hinweis auf Steuerfreiheit', 'Gelangensbestätigung'];
+    l1.regRisk = null;
+  } else {
+    // ruhende L1 → steuerpflichtig im Abgangsland (dep)
+    const rate    = _qcRate(dep);
+    const hasUID  = !!vatIds[dep] || dep === home;
+    const sapEntry = SAP_TAX_MAP[company]?.[dep]?.['domestic'] || SAP_TAX_MAP[company]?.[home]?.['domestic'];
+    l1.type    = 'resting';
+    l1.title   = `Ruhende Lieferung — steuerpflichtig ${_qcCountryName(dep)} ${rate} %`;
+    l1.taxInfo = `${rate} % ${dep}-MwSt`;
+    l1.sapCode = hasUID ? (sapEntry?.in || null) : null;
+    l1.sapDesc = hasUID ? (sapEntry?.desc || null) : null;
+    l1.sapNote = hasUID ? null : `Kein SAP-Kennzeichen — ${company} hat keine ${dep}-UID`;
+    l1.reqs    = [`Eingangsrechnung mit ${rate} % ${dep}-MwSt`];
+    l1.regRisk = hasUID ? null : dep;
+  }
+
+  // ── Step 2+3: L2 (Ausgangsrechnung — Company → Kunde) ────────────────
+  const l2 = {};
+  if (destIsThird) {
+    const isCH = dest === 'CH';
+    const sapEntry = isCH
+      ? (SAP_TAX_MAP[company]?.['CH']?.['export'] || SAP_TAX_MAP[company]?.[home]?.['export'])
+      : SAP_TAX_MAP[company]?.[home]?.['export'];
+    l2.type    = 'export';
+    l2.title   = `Ausfuhr nach ${_qcCountryName(dest)} (Drittland)`;
+    l2.taxInfo = '0 % — Ausfuhr steuerfrei';
+    l2.sapCode = sapEntry?.out || (company === 'EPROHA' ? 'A0' : 'G0');
+    l2.sapDesc = sapEntry?.desc || 'Ausfuhr 0 %';
+    l2.reqs    = [`UID ${company} (${home})`, 'Ausfuhrnachweise', 'Kein Steuerausweis', 'Zollanmeldung / EORI'];
+    l2.regRisk = null;
+  } else if (!movingL1) {
+    // bewegte L2 → ig. Lieferung durch Company
+    const sapEntry = SAP_TAX_MAP[company]?.[home]?.['ic-exempt'];
+    l2.type    = 'ig-lieferung';
+    l2.title   = 'Steuerfreie EU-Lieferung (ig. Lieferung)';
+    l2.taxInfo = '0 % — ig. Lieferung';
+    l2.sapCode = sapEntry?.out || null;
+    l2.sapDesc = sapEntry?.desc || null;
+    l2.reqs    = [`UID ${company} (${home})`, `UID Kunde (${dest})`, 'Hinweis auf Steuerfreiheit', 'Gelangensbestätigung / CMR'];
+    l2.regRisk = null;
+  } else {
+    // ruhende L2 → steuerpflichtig
+    // Nach Einfuhr (depIsThird): Ware ist jetzt im Empfangsland (dest)
+    const taxCountry = depIsThird ? dest : dep;
+    const rate       = _qcRate(taxCountry);
+    const hasUID     = !!vatIds[taxCountry] || taxCountry === home;
+    const sapEntry   = SAP_TAX_MAP[company]?.[taxCountry]?.['domestic'] || SAP_TAX_MAP[company]?.[home]?.['domestic'];
+    l2.type    = 'resting';
+    l2.title   = `Ruhende Lieferung — steuerpflichtig ${_qcCountryName(taxCountry)} ${rate} %`;
+    l2.taxInfo = `${rate} % ${taxCountry}-MwSt`;
+    l2.sapCode = hasUID ? (sapEntry?.out || null) : null;
+    l2.sapDesc = hasUID ? (sapEntry?.desc || null) : null;
+    l2.sapNote = hasUID ? null : `Kein SAP-Kennzeichen — ${company} hat keine ${taxCountry}-UID`;
+    l2.reqs    = [`UID ${company}`, `UID Kunde (${dest})`, `Steuerbetrag ${rate} %`];
+    l2.regRisk = hasUID ? null : taxCountry;
+  }
+
+  // ── Step 4: Dreiecksgeschäft ──────────────────────────────────────────
+  // 3 verschiedene EU-Länder: dep, home (Company-UID-Land), dest
+  const triangle = _qcIsEU(dep) && _qcIsEU(dest) && _qcIsEU(home)
+    && dep !== dest && dep !== home && dest !== home;
+
+  // ── Step 5: Registrierungsrisiko ──────────────────────────────────────
+  const regRisks = [l1.regRisk, l2.regRisk].filter(Boolean);
+
+  return { movingL1, l1, l2, triangle, regRisks, art36aHint, dep, dest, company, home };
+}
+
+function renderQuickCheck() {
+  const el = $('tab-quickcheck');
+  if (!el) return;
+
+  const { company, dep, dest, transport } = qcState;
+
+  // ── Dropdown HTML ─────────────────────────────────────────────────────
+  const depOpts  = QC_COUNTRIES.map(c =>
+    `<option value="${c.code}" ${c.code === dep  ? 'selected' : ''}>${FLAGS[c.code] || ''} ${c.name}</option>`).join('');
+  const destOpts = QC_COUNTRIES.map(c =>
+    `<option value="${c.code}" ${c.code === dest ? 'selected' : ''}>${FLAGS[c.code] || ''} ${c.name}</option>`).join('');
+
+  // ── Transport-Radios ──────────────────────────────────────────────────
+  const coLabel = company === 'EPDE' ? 'EPDE' : 'EPROHA';
+  const tOpts = [
+    { v: 'supplier', l: 'Lieferant' },
+    { v: 'middle',   l: coLabel },
+    { v: 'customer', l: 'Kunde' },
+  ].map(o => `
+    <label class="qc-radio-label">
+      <input type="radio" name="qc-transport" value="${o.v}" ${transport === o.v ? 'checked' : ''}
+             onchange="qcState.transport=this.value;renderQuickCheck()">
+      ${o.l}
+    </label>`).join('');
+
+  // ── Result ────────────────────────────────────────────────────────────
+  const r = buildQuickCheck();
+
+  const movingLabel = r.movingL1 ? 'L1 (Lieferant → ' + coLabel + ')' : 'L2 (' + coLabel + ' → Kunde)';
+  const movingReason = transport === 'supplier' ? 'Lieferant organisiert Transport → L1 bewegte Lieferung'
+    : transport === 'customer' ? 'Kunde organisiert Transport → L2 bewegte Lieferung'
+    : r.art36aHint
+      ? `${coLabel} organisiert Transport → L1 bewegte Lieferung (Art. 36a beachten)`
+      : `${coLabel} organisiert Transport → L1 bewegte Lieferung`;
+
+  const art36aBox = r.art36aHint ? `
+    <div class="qc-hint qc-hint--warn">
+      ⚠️ <strong>Art. 36a Quick Fix:</strong> Falls ${coLabel} die ${_qcCountryName(dep)}-UID (Abgangsland) verwendet,
+      wird L2 zur bewegten Lieferung. ${coLabel} hat eine ${dep}-UID — bitte UID-Wahl prüfen.
+    </div>` : '';
+
+  function sapBadge(code, desc) {
+    if (!code) return '';
+    return `<span class="qc-sap-badge" title="${desc || ''}">${code}</span>`;
+  }
+
+  function invoiceBox(side, supplyLabel, data) {
+    const typeIcon = data.type === 'ig-erwerb' || data.type === 'ig-lieferung' ? '🟢'
+      : data.type === 'import' ? '📦'
+      : data.type === 'export' ? '✈️'
+      : '🔶';
+    return `
+      <div class="qc-invoice-box">
+        <div class="qc-invoice-hdr">${side}</div>
+        <div class="qc-invoice-sub">${supplyLabel}</div>
+        <div class="qc-invoice-title">${typeIcon} ${data.title}</div>
+        <div class="qc-invoice-tax">${data.taxInfo}</div>
+        ${data.sapCode ? `<div class="qc-sap-row">SAP: ${sapBadge(data.sapCode, data.sapDesc)}</div>` : ''}
+        ${data.sapNote ? `<div class="qc-sap-note">${data.sapNote}</div>` : ''}
+        <ul class="qc-reqs">
+          ${(data.reqs || []).map(r => `<li>${r}</li>`).join('')}
+        </ul>
+        ${data.regRisk ? `<div class="qc-hint qc-hint--warn">⚠️ Registrierungsprüfung <strong>${_qcCountryName(data.regRisk)}</strong> erforderlich</div>` : ''}
+      </div>`;
+  }
+
+  const hintsHtml = (() => {
+    const items = [];
+    if (r.triangle) items.push('✅ <strong>Dreiecksgeschäft</strong> nach Art. 141 MwStSystRL möglicherweise anwendbar');
+    else items.push('❌ Dreiecksgeschäft nicht anwendbar');
+    if (r.regRisks.length === 0) items.push('✅ Kein Registrierungsrisiko erkannt');
+    else r.regRisks.forEach(c => items.push(`⚠️ <strong>Registrierungsrisiko ${_qcCountryName(c)}</strong> — ${qcState.company} hat keine ${c}-UID`));
+    return items.map(i => `<li>${i}</li>`).join('');
+  })();
+
+  el.innerHTML = `
+    <div class="qc-wrap">
+
+      <div class="qc-form">
+        <div class="qc-form-row">
+          <div class="qc-field">
+            <label class="qc-label">Gesellschaft</label>
+            <div class="qc-co-btns">
+              <button class="qc-co-btn ${company === 'EPDE'   ? 'active' : ''}" onclick="qcState.company='EPDE';renderQuickCheck()">EPDE</button>
+              <button class="qc-co-btn ${company === 'EPROHA' ? 'active' : ''}" onclick="qcState.company='EPROHA';renderQuickCheck()">EPROHA</button>
+            </div>
+          </div>
+          <div class="qc-field">
+            <label class="qc-label">Abgangsland (Lieferant)</label>
+            <select class="qc-select" onchange="qcState.dep=this.value;renderQuickCheck()">${depOpts}</select>
+          </div>
+          <div class="qc-field">
+            <label class="qc-label">Empfangsland (Kunde)</label>
+            <select class="qc-select" onchange="qcState.dest=this.value;renderQuickCheck()">${destOpts}</select>
+          </div>
+        </div>
+        <div class="qc-transport-row">
+          <span class="qc-label">Transport organisiert:</span>
+          ${tOpts}
+        </div>
+      </div>
+
+      <div class="qc-divider"></div>
+
+      <div class="qc-moving-banner">
+        📦 <strong>Bewegte Lieferung: ${movingLabel}</strong>
+        <span class="qc-moving-reason">${movingReason}</span>
+      </div>
+
+      ${art36aBox}
+
+      <div class="qc-grid">
+        ${invoiceBox('EINGANGSRECHNUNG', `L1: Lieferant → ${coLabel}`, r.l1)}
+        ${invoiceBox('AUSGANGSRECHNUNG', `L2: ${coLabel} → Kunde`, r.l2)}
+      </div>
+
+      <div class="qc-hints-box">
+        <div class="qc-hints-hdr">ℹ️ Weitere Hinweise</div>
+        <ul class="qc-hints-list">${hintsHtml}</ul>
+      </div>
+
+    </div>`;
+}
+
 // Boot
 document.addEventListener('DOMContentLoaded', function init() {
   // Restore theme first (no flash)

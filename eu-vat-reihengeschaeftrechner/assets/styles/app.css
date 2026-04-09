@@ -2301,3 +2301,235 @@ header {
     font-size: 0.76rem;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SECTION Z · Quick Check Tab
+═══════════════════════════════════════════════════════════════════════ */
+
+/* Always-visible QC tab bar */
+.qc-bar {
+  padding: 8px 10px 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+}
+.qc-tab-btn {
+  color: var(--green);
+  border-color: transparent;
+}
+.qc-tab-btn.active {
+  color: var(--green);
+  border-bottom-color: var(--green);
+  background: var(--green-dim);
+}
+
+/* Scroll wrapper */
+.qc-wrap {
+  padding: 16px 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  font-family: var(--sans);
+}
+
+/* Form */
+.qc-form {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.qc-form-row {
+  display: grid;
+  grid-template-columns: auto 1fr 1fr;
+  gap: 12px;
+  align-items: end;
+}
+.qc-field { display: flex; flex-direction: column; gap: 5px; }
+.qc-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--tx-2);
+}
+.qc-select {
+  background: var(--surface-3);
+  border: 1px solid var(--border-md);
+  border-radius: var(--r);
+  color: var(--tx-1);
+  font-size: 0.8rem;
+  padding: 6px 9px;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.qc-select:focus { border-color: var(--green); }
+.qc-co-btns { display: flex; gap: 4px; }
+.qc-co-btn {
+  padding: 5px 12px;
+  border-radius: var(--r);
+  border: 1px solid var(--border-md);
+  background: var(--surface-3);
+  color: var(--tx-2);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.qc-co-btn.active {
+  background: var(--green-dim);
+  border-color: var(--green);
+  color: var(--green);
+}
+.qc-transport-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.qc-radio-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8rem;
+  color: var(--tx-1);
+  cursor: pointer;
+}
+.qc-radio-label input { accent-color: var(--green); cursor: pointer; }
+
+/* Divider */
+.qc-divider {
+  height: 1px;
+  background: var(--border);
+}
+
+/* Moving banner */
+.qc-moving-banner {
+  background: var(--green-dim);
+  border: 1px solid var(--teal-b);
+  border-radius: var(--r);
+  padding: 10px 14px;
+  font-size: 0.82rem;
+  color: var(--tx-1);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+.qc-moving-reason {
+  color: var(--tx-2);
+  font-size: 0.78rem;
+}
+
+/* Hint boxes */
+.qc-hint {
+  border-radius: var(--r);
+  padding: 8px 12px;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+.qc-hint--warn {
+  background: rgba(245,168,39,0.10);
+  border: 1px solid rgba(245,168,39,0.30);
+  color: var(--tx-1);
+}
+
+/* Invoice grid */
+.qc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.qc-invoice-box {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.qc-invoice-hdr {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--tx-3);
+}
+.qc-invoice-sub {
+  font-size: 0.7rem;
+  color: var(--tx-2);
+}
+.qc-invoice-title {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--tx-1);
+  line-height: 1.35;
+}
+.qc-invoice-tax {
+  font-size: 0.78rem;
+  color: var(--tx-2);
+}
+.qc-sap-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--tx-2);
+}
+.qc-sap-badge {
+  background: var(--sap-badge-bg);
+  color: var(--sap-badge-color);
+  border: 1px solid var(--sap-badge-border);
+  border-radius: 4px;
+  padding: 2px 7px;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: default;
+}
+.qc-sap-note {
+  font-size: 0.72rem;
+  color: var(--tx-2);
+  font-style: italic;
+}
+.qc-reqs {
+  margin: 0;
+  padding: 0 0 0 14px;
+  font-size: 0.73rem;
+  color: var(--tx-2);
+  line-height: 1.7;
+}
+
+/* Hints box */
+.qc-hints-box {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 12px 14px;
+}
+.qc-hints-hdr {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--tx-2);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.qc-hints-list {
+  margin: 0;
+  padding: 0 0 0 14px;
+  font-size: 0.78rem;
+  color: var(--tx-1);
+  line-height: 1.9;
+}
+
+/* Responsive: stack on mobile */
+@media (max-width: 600px) {
+  .qc-form-row { grid-template-columns: 1fr; }
+  .qc-grid     { grid-template-columns: 1fr; }
+}
