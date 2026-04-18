@@ -362,7 +362,8 @@ nav {
 .card-lf      { --tool-color: #22c55e; }
 .card-lego    { --tool-color: #f59e0b; }
 .card-energy  { --tool-color: #6366f1; }
-.card-receipt { --tool-color: #8b5cf6; }
+.card-receipt  { --tool-color: #8b5cf6; }
+.card-finance  { --tool-color: #0ea5e9; }
 
 /* ---- Stack ---- */
 
