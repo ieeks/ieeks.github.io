@@ -109,6 +109,7 @@ function toggleTheme() {
 | ⚡ | Ladefuchs | EV Charging · Firebase | `/wallbox` | live |
 | 🧱 | LEGO Tracker | Family · Wishlist | `/lego` | live |
 | 📊 | Energy Dashboard | Home · Analytics | `/energy` | in progress |
+| 📋 | Sublist | Personal · Subscription Tracking | `/sublist-web` | in progress |
 
 **Kachel-Design:**
 - `background: var(--bg-card)`, `border: 1px solid var(--border-light)`

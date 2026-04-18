@@ -2,6 +2,8 @@
 
 Static personal GitHub Pages landing page for `ieeks.github.io`.
 
+The landing page includes personal tool cards, including work-in-progress projects that should appear in the Developer section before they are fully finished.
+
 ## Stack
 
 - HTML
