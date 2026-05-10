@@ -501,6 +501,7 @@ footer {
 }
 
 /* ---- V2 · Trimmy ---- */
+
 [data-design="v2"] {
   --bg: #eee8db;
   --bg-warm: #e8e2d5;
@@ -514,6 +515,7 @@ footer {
 [data-design="v2"] .tool-card {
   border: 2px solid #1a1a1a;
   box-shadow: 3px 3px 0 #c44b28;
+  min-height: auto;
   transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
 
@@ -523,22 +525,33 @@ footer {
 }
 
 [data-design="v2"] .tool-card:hover {
+  border-color: #1a1a1a;
   transform: translate(-1px, -1px);
   box-shadow: 5px 5px 0 #c44b28;
-  border-color: #1a1a1a;
 }
 
 [data-design="v2"][data-theme="dark"] .tool-card:hover {
+  border-color: #4a4540;
   transform: translate(-1px, -1px);
   box-shadow: 5px 5px 0 #00d2ff;
-  border-color: #4a4540;
 }
 
+[data-design="v2"] .tool-card:active {
+  transform: translate(0, 0);
+  box-shadow: 3px 3px 0 #c44b28;
+}
+
+[data-design="v2"][data-theme="dark"] .tool-card:active {
+  box-shadow: 3px 3px 0 #00d2ff;
+}
+
+/* Hide color stripe in V2 — replaced by offset shadow */
 [data-design="v2"] .tool-card::before {
   display: none;
 }
 
 /* ---- Grain Overlay ---- */
+
 .grain {
   display: none;
   position: fixed;
@@ -555,6 +568,7 @@ footer {
 }
 
 /* ---- Crop Marks ---- */
+
 .crop-mark {
   display: none;
   position: fixed;
@@ -575,6 +589,7 @@ footer {
 .crop-mark.tr { top: 14px; right: 16px; }
 
 /* ---- Design Toggle Pill ---- */
+
 .design-toggle {
   position: fixed;
   bottom: 24px;
@@ -586,7 +601,7 @@ footer {
   border-radius: 100px;
   padding: 4px;
   gap: 2px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
 }
 
 [data-theme="dark"] .design-toggle {
