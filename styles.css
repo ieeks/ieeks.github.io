@@ -500,6 +500,117 @@ footer {
   color: var(--accent);
 }
 
+/* ---- V2 · Trimmy ---- */
+[data-design="v2"] {
+  --bg: #eee8db;
+  --bg-warm: #e8e2d5;
+}
+
+[data-design="v2"][data-theme="dark"] {
+  --bg: #1e2024;
+  --bg-warm: #23272d;
+}
+
+[data-design="v2"] .tool-card {
+  border: 2px solid #1a1a1a;
+  box-shadow: 3px 3px 0 #c44b28;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+[data-design="v2"][data-theme="dark"] .tool-card {
+  border: 2px solid #4a4540;
+  box-shadow: 3px 3px 0 #00d2ff;
+}
+
+[data-design="v2"] .tool-card:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 #c44b28;
+  border-color: #1a1a1a;
+}
+
+[data-design="v2"][data-theme="dark"] .tool-card:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 #00d2ff;
+  border-color: #4a4540;
+}
+
+[data-design="v2"] .tool-card::before {
+  display: none;
+}
+
+/* ---- Grain Overlay ---- */
+.grain {
+  display: none;
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 999;
+  opacity: 0.25;
+}
+
+[data-design="v2"] .grain {
+  display: block;
+}
+
+/* ---- Crop Marks ---- */
+.crop-mark {
+  display: none;
+  position: fixed;
+  font-family: monospace;
+  font-size: 16px;
+  line-height: 1;
+  opacity: 0.3;
+  pointer-events: none;
+  z-index: 40;
+  color: var(--text);
+}
+
+[data-design="v2"] .crop-mark {
+  display: block;
+}
+
+.crop-mark.tl { top: 14px; left: 16px; }
+.crop-mark.tr { top: 14px; right: 16px; }
+
+/* ---- Design Toggle Pill ---- */
+.design-toggle {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  background: #1a1a1a;
+  border-radius: 100px;
+  padding: 4px;
+  gap: 2px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+}
+
+[data-theme="dark"] .design-toggle {
+  background: #2a2e34;
+}
+
+.design-toggle button {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  padding: 6px 14px;
+  border-radius: 100px;
+  border: none;
+  cursor: pointer;
+  background: transparent;
+  color: #888;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+
+.design-toggle button.active {
+  background: #c44b28;
+  color: #fff;
+}
+
 /* ---- Responsive ---- */
 
 @media (max-width: 600px) {
