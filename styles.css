@@ -43,6 +43,7 @@
 
 html {
   scroll-behavior: smooth;
+  position: relative;
 }
 
 body {
@@ -571,7 +572,7 @@ footer {
 
 .crop-mark {
   display: none;
-  position: fixed;
+  position: absolute;
   font-family: monospace;
   font-size: 16px;
   line-height: 1;
