@@ -80,3 +80,21 @@ if (heading) {
   heading.addEventListener('mouseenter', function() { scramble(this); });
   heading.addEventListener('touchstart', function() { scramble(this); }, { passive: true });
 }
+
+// === Design Toggle ===
+
+function setDesign(design) {
+  document.documentElement.setAttribute('data-design', design);
+  try { localStorage.setItem('design', design); } catch(e) {}
+  updateDesignButtons();
+}
+
+function updateDesignButtons() {
+  var current = document.documentElement.getAttribute('data-design') || 'v1';
+  document.getElementById('btn-v1').classList.toggle('active', current === 'v1');
+  document.getElementById('btn-v2').classList.toggle('active', current === 'v2');
+  document.getElementById('btn-v1').setAttribute('aria-pressed', current === 'v1');
+  document.getElementById('btn-v2').setAttribute('aria-pressed', current === 'v2');
+}
+
+document.addEventListener('DOMContentLoaded', updateDesignButtons);
