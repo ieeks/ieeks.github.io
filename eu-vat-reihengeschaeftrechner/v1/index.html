@@ -24,25 +24,12 @@
     <button onclick="setCompany('EPROHA',this)">EPROHA</button>
   </div>
   <div class="h-div"></div>
-  <!-- Modus-Tabs -->
-  <div class="h-mode-tabs" id="hdrModeTabs">
-    <button class="h-mode-tab active" data-mode="3" onclick="setPartiesFromHeader(3,this)">3P<span class="h-mode-tab-sub">Standard</span></button>
-    <button class="h-mode-tab" data-mode="4" onclick="setPartiesFromHeader(4,this)">4P<span class="h-mode-tab-sub">EuGH</span></button>
-    <button class="h-mode-tab" data-mode="2" id="hdrMode2" onclick="setPartiesFromHeader(2,this)">2P<span class="h-mode-tab-sub">Lager</span></button>
-    <button class="h-mode-tab" data-mode="5" onclick="setPartiesFromHeader(5,this)">Lohn<span class="h-mode-tab-sub">Art. 17</span></button>
-  </div>
-  <div class="h-div"></div>
   <button class="expert-toggle" id="expertToggle" onclick="toggleExpert()">
     <span class="expert-dot"></span>Experten-Modus
   </button>
+  <button class="tab-btn qc-header-btn" id="qcHeaderBtn" onclick="toggleQuickCheck(this)">🟢 Quick Check</button>
   <span class="bmf-pill" id="bmfPill" title="BMF-Abgleich Quellenstand">⚖ BMF: …</span>
   <div class="h-spacer"></div>
-  <!-- View-Nav -->
-  <div class="h-view-nav" id="hdrViewNav">
-    <button class="h-view-btn active" data-view="standard" onclick="switchView('standard',this)">— Standard</button>
-    <button class="h-view-btn" data-view="quickcheck" onclick="switchView('quickcheck',this)">⚡ Quick Check</button>
-    <button class="h-view-btn" data-view="vergleich" onclick="switchView('vergleich',this)" style="display:none">⚖ Vergleich</button>
-  </div>
   <div class="live-badge"><span class="live-dot"></span>Live</div>
   <div class="h-overflow-wrap">
     <button class="h-overflow-btn" onclick="toggleOverflowMenu()" title="Weitere Optionen" aria-haspopup="true" aria-expanded="false" id="overflowBtn">⋯</button>
@@ -52,7 +39,7 @@
       <button class="h-overflow-item" onclick="exportPDF();closeOverflow()" role="menuitem"><span>📄</span>PDF exportieren</button>
       <button class="h-overflow-item" onclick="toggleDevMode();closeOverflow()" role="menuitem" id="devModeBtn"><span>🏷</span>Dev Mode</button>
       <button class="h-overflow-item" onclick="openTests();closeOverflow()" role="menuitem"><span>⚙</span>Tests</button>
-      <button class="h-overflow-item" onclick="switchToDesign('v1');closeOverflow()" role="menuitem"><span>🔁</span>→ v1 Stabil</button>
+      <button class="h-overflow-item" onclick="switchToDesign('v2');closeOverflow()" role="menuitem"><span>🔁</span>→ v2 Vorschau</button>
       <button class="h-overflow-item danger" onclick="resetAll();closeOverflow()" role="menuitem"><span>↺</span>Zurücksetzen</button>
     </div>
   </div>
@@ -80,21 +67,13 @@
 
   <!-- ══ LEFT: INPUT ══════════════════════════════════════════════════════ -->
   <div class="pane-left">
-    <!-- Modus-Badge -->
-    <div class="sidebar-mode-badge" id="sidebarModeBadge">
-      <span class="sidebar-mode-code" id="sidebarModeCode">3P</span>
-      <div class="sidebar-mode-info">
-        <span class="sidebar-mode-title" id="sidebarModeTitle">Standard</span>
-        <span class="sidebar-mode-desc" id="sidebarModeDesc">Standard-Reihengeschäft inkl. CH/GB</span>
-      </div>
-      <button class="sidebar-mode-switch" onclick="flashModeTabs()">wechseln ↑</button>
-    </div>
     <div class="pane-left-scroll">
 
       <!-- Struktur -->
       <div class="sec" id="strukturSec" data-component="input.Structur">
-        <div class="sec-hdr">Struktur</div>
+        <div class="sec-hdr">👥 Struktur</div>
         <div class="sec-body">
+          <div class="sub">Wie viele Parteien?</div>
           <div id="partyRow">
             <div style="display:flex;gap:6px;margin-bottom:6px;" id="partyTopRow">
               <button class="party-btn" id="partyBtn2" onclick="setParties(2,this)">2</button>
@@ -103,26 +82,24 @@
             </div>
             <button class="party-btn" id="partyBtn5" onclick="setParties(5,this)" style="width:100%;font-size:0.78rem;">🔧 Lohnveredelung</button>
           </div>
+          <!-- Me-Position (4P only, hidden by default) -->
+          <div id="mePosSection" style="display:none;margin-top:10px;">
+            <div class="sub">Meine Position in der Kette</div>
+            <div class="me-pos-row">
+              <button class="me-pos-btn active" data-pos="2" onclick="setMePos(this)">B · 1. Zwischenhändler</button>
+              <button class="me-pos-btn" data-pos="3" onclick="setMePos(this)">C · 2. Zwischenhändler</button>
+            </div>
+          </div>
           <!-- EuG T-646/24 hint — now as info icon next to 4P button, not separate block -->
           <div id="eugHintBox" style="display:none;"></div>
         </div>
       </div>
 
-      <!-- Me-Position (4P only) -->
-      <div class="sec" id="mePosSection" style="display:none;" data-component="input.MePosition">
-        <div class="sec-hdr">Meine Position</div>
-        <div class="sec-body">
-          <div class="me-pos-row">
-            <button class="me-pos-btn active" data-pos="2" onclick="setMePos(this)">B · 1. Zwischenhändler</button>
-            <button class="me-pos-btn" data-pos="3" onclick="setMePos(this)">C · 2. Zwischenhändler</button>
-          </div>
-        </div>
-      </div>
-
       <!-- Warenkette -->
       <div class="sec" data-component="input.Warenkette">
-        <div class="sec-hdr">Parteien</div>
+        <div class="sec-hdr">🔗 Warenkette</div>
         <div class="sec-body">
+          <div class="sub">Länder der Parteien</div>
           <div class="pickers-row" id="countryPickers"></div>
           <div class="chain-bar" id="chainBar"></div>
         </div>
@@ -130,8 +107,9 @@
 
       <!-- Transport -->
       <div class="sec" data-component="input.Transport">
-        <div class="sec-hdr">Transport</div>
+        <div class="sec-hdr">🚛 Transport</div>
         <div class="sec-body">
+          <div class="sub">Wer organisiert den Transport?</div>
           <div class="transport-list" id="transportList"></div>
         </div>
       </div>
@@ -147,7 +125,7 @@
       <!-- Lohnveredelung panel (Modus 5 — shown when currentMode===5) -->
       <div id="lohnPanel" style="display:none;" data-component="input.Lohnveredelung">
         <div class="sec">
-          <div class="sec-hdr">Lohnveredelung</div>
+          <div class="sec-hdr">🔧 Lohnveredelung — Modus 5</div>
           <div class="sec-body">
             <div class="sub" style="margin-bottom:6px;">Rohmaterial → Converter (Veredelung) → Kunde</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
@@ -187,22 +165,21 @@
         </div>
       </div>
 
-      <!-- UID Status — 2-col inline -->
+      <!-- UID Status (reference, collapsible — moved to bottom) -->
       <div class="sec" id="uidSec" data-component="input.UidStatus">
-        <div class="sec-hdr">Eigene UIDs</div>
-        <div class="sec-body">
-          <div id="uidInlineGrid"></div>
-          <div id="uidList" style="display:none"></div>
-          <div id="uidAllSection" style="display:none"></div>
-          <span id="uidChips" style="display:none"></span>
-          <span id="uidChevron" style="display:none"></span>
+        <button class="uid-hdr-btn" onclick="toggleUIDs()">
+          <span class="uid-hdr-label">🆔 UID-Status</span>
+          <span class="uid-hdr-chips" id="uidChips"></span>
+          <span class="uid-chevron" id="uidChevron">▾</span>
+        </button>
+        <div class="uid-body" id="uidBody">
+          <div class="uid-body-inner">
+            <div id="uidList"></div>
+            <div id="uidAllSection"></div>
+          </div>
         </div>
       </div>
 
-    </div>
-    <!-- Sidebar Footer CTA -->
-    <div class="sidebar-footer">
-      <button class="sidebar-cta" onclick="renderAll()">Ergebnis berechnen</button>
     </div>
   </div>
 
