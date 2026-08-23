@@ -220,3 +220,53 @@ Kein Build-Step. `index.html` direkt im Root → GitHub Pages served es automati
 - Dark Mode Accent bleibt `#00d2ff` (nicht zurück zu Orange)
 - Das `ie`-Logo bleibt als inline SVG mit `currentColor`
 - Scramble läuft auf dem Text-`<h1>`, KEIN Canvas für den Heading
+
+---
+
+# v3 · Lagoon
+
+Dritte Design-Variante, umschaltbar über die Pille unten (`data-design="v3"`).
+v1 und v2 bleiben unverändert — v3 überschreibt nur Tokens und Komponenten,
+alles in denselben drei Dateien.
+
+## Design System v3
+
+**Signaturfarben (Light):**
+```css
+--v3-sand: #fdf3e0    --v3-lagoon: #0f6e7a   --v3-sun: #ffc24b
+--v3-sky:  #dceff2    --v3-deep:   #0a3b44   --v3-melon: #ff6f4e
+--v3-foam: #fffdf7                            --v3-reed:  #7fa05a
+```
+
+**Dark:** Nacht-Lagune — `--bg: #08222a`, Karten `#0f333b`, Accent bleibt `#00d2ff`.
+
+Diese Werte werden auf die bestehenden Tokens (`--bg`, `--text`, `--accent` …)
+gemappt, damit Nav, Footer und Toggle ohne Sonderregeln mitlaufen.
+
+**Hintergrund:** Sonnen-Halo (radial, 78% / -12%) über Himmel→Sand→Foam-Verlauf,
+`background-attachment: fixed`.
+
+**Font:** `Fraunces` (variabel, opsz/wght/SOFT/WONK) für Heading und Kachel-Titel.
+Body bleibt Instrument Sans, Meta bleibt IBM Plex Mono.
+
+**Max-width:** 840px (statt 720px).
+
+## Komponenten v3
+
+- **Hero:** Eyebrow mit Haarlinie (`::after`, `flex:1`), zweizeiliges Fraunces-900-Heading
+  (`personal` / *`toolbox~`* kursiv in Lagoon), Standfirst 17px / 46ch, SVG-Welle darunter.
+- **Tool-Karten:** einspaltig, Grid `32px 1fr` (Icon links neben dem Titel),
+  5px Farbbalken links in `--tool-color`, Rise-Animation mit 45ms-Staffelung über `--i`.
+- **Stempel:** `.tool-status` wird absolut oben rechts positioniert, `rotate(-2.5deg)`,
+  Label „Status" via `::before`, Wert im `<b>`. Grün = live, Amber = in progress.
+- **Filter:** Pills (Alle / Steuer / Finanzen / Familie / Zuhause / Dev) über
+  `data-cat` auf den Karten, mit Live-Counter. Nur in v3 sichtbar.
+- **Stack-Block** wird zur Notiz-Box in `--v3-sky`.
+
+## Mechanik
+
+- Heading besteht aus zwei `[data-scramble]`-Spans, damit v1/v2 einzeilig und v3
+  zweizeilig gesetzt werden kann — der Scramble läuft über beide gleichzeitig.
+- `?design=v3` in der URL setzt die Variante und schreibt sie in localStorage.
+- Beim Wechsel weg von v3 werden alle Karten wieder gezeigt, die Filterauswahl
+  bleibt aber gemerkt (`renderCards(filter, remember)`).
