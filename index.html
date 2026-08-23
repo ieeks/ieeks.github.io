@@ -17,17 +17,23 @@
 
       // Design
       var design;
-      try { design = localStorage.getItem('design'); } catch(e) {}
-      if (!design) design = 'v1';
+      var forced = /[?&]design=(v[0-9]+)/.exec(location.search);
+      if (forced) {
+        design = forced[1];
+        try { localStorage.setItem('design', design); } catch(e) {}
+      } else {
+        try { design = localStorage.getItem('design'); } catch(e) {}
+      }
+      if (['v1', 'v2', 'v3'].indexOf(design) === -1) design = 'v1';
       document.documentElement.setAttribute('data-design', design);
     })();
   </script>
   <!-- 2. Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..900,0..100,0..1;1,9..144,400..900,0..100,0..1&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <!-- 3. CSS -->
-  <link rel="stylesheet" href="styles.css?v=2">
+  <link rel="stylesheet" href="styles.css?v=3">
 </head>
 <body>
 
@@ -73,15 +79,31 @@
 
   <section class="intro">
     <div class="intro-eyebrow">MANUEL · VIENNA</div>
-    <h1 class="intro-heading" id="scramble-heading" data-text="personal toolbox~">personal toolbox~</h1>
+    <h1 class="intro-heading" id="scramble-heading">
+      <span class="hero-word" data-scramble data-text="personal">personal</span>
+      <span class="hero-word hero-word-em" data-scramble data-text="toolbox~">toolbox~</span>
+    </h1>
     <p class="intro-bio">A small collection of <strong>tools I built for myself</strong> — for work, for home, for family. EU VAT calculations, EV charging logs, LEGO tracking. Nothing fancy, everything useful.</p>
+    <svg class="hero-wave" viewBox="0 0 400 20" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0,12 C25,2 45,2 70,12 C95,22 115,22 140,12 C165,2 185,2 210,12 C235,22 255,22 280,12 C305,2 325,2 350,12 C375,22 385,22 400,14"
+            fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>
   </section>
 
   <section class="tools-section" id="tools">
     <div class="section-label">Tools</div>
-    <div class="tools-grid">
+    <div class="tool-filters" role="group" aria-label="Tools filtern">
+      <button type="button" data-filter="all" aria-pressed="true">Alle</button>
+      <button type="button" data-filter="tax" aria-pressed="false">Steuer</button>
+      <button type="button" data-filter="money" aria-pressed="false">Finanzen</button>
+      <button type="button" data-filter="family" aria-pressed="false">Familie</button>
+      <button type="button" data-filter="home" aria-pressed="false">Zuhause</button>
+      <button type="button" data-filter="dev" aria-pressed="false">Dev</button>
+    </div>
+    <p class="tool-count" id="tool-count" aria-live="polite"></p>
+    <div class="tools-grid" id="tools-grid">
 
-      <a class="tool-card card-vat" href="https://ieeks.github.io/eu-vat-reihengeschaeftrechner/" target="_blank" rel="noreferrer">
+      <a class="tool-card card-vat" data-cat="tax" href="https://ieeks.github.io/eu-vat-reihengeschaeftrechner/" target="_blank" rel="noreferrer">
         <span class="tool-icon" aria-hidden="true">
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <rect x="5" y="3.5" width="14" height="17" rx="2.5"/>
@@ -96,12 +118,12 @@
         <div class="tool-type">EU Tax · Reihengeschäft</div>
         <div class="tool-desc">Chain transaction analysis across EU member states. Tax codes, UID validation, SAP mapping.</div>
         <div class="tool-footer">
-          <span class="tool-status"><span class="dot live"></span>live</span>
+          <span class="tool-status status-live"><span class="dot live"></span><b>live</b></span>
           <span class="tool-arrow">↗</span>
         </div>
       </a>
 
-      <a class="tool-card card-lf" href="https://ieeks.github.io/wallbox/" target="_blank" rel="noreferrer">
+      <a class="tool-card card-lf" data-cat="home" href="https://ieeks.github.io/wallbox/" target="_blank" rel="noreferrer">
         <span class="tool-icon" aria-hidden="true">
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <rect x="2" y="7" width="16" height="11" rx="2"/>
@@ -113,12 +135,12 @@
         <div class="tool-type">EV Charging · Firebase</div>
         <div class="tool-desc">Home charging tracker for BYD Seal U. go-e CSV import, Wien Energie tariffs, Firestore sync.</div>
         <div class="tool-footer">
-          <span class="tool-status"><span class="dot live"></span>live</span>
+          <span class="tool-status status-live"><span class="dot live"></span><b>live</b></span>
           <span class="tool-arrow">↗</span>
         </div>
       </a>
 
-      <a class="tool-card card-lego" href="https://ieeks.github.io/lego-tracker/" target="_blank" rel="noreferrer">
+      <a class="tool-card card-lego" data-cat="family" href="https://ieeks.github.io/lego-tracker/" target="_blank" rel="noreferrer">
         <span class="tool-icon" aria-hidden="true">
           <svg fill="none" height="17" viewBox="0 0 28 16" width="30" xmlns="http://www.w3.org/2000/svg" style="color:currentColor">
             <rect fill="currentColor" height="14" rx="1" width="28" x="0" y="2" />
@@ -136,12 +158,12 @@
         <div class="tool-type">Family · Wishlist</div>
         <div class="tool-desc">Wishlist and collection tracker built for grandparents. No login, simple interface.</div>
         <div class="tool-footer">
-          <span class="tool-status"><span class="dot live"></span>live</span>
+          <span class="tool-status status-live"><span class="dot live"></span><b>live</b></span>
           <span class="tool-arrow">↗</span>
         </div>
       </a>
 
-      <a class="tool-card card-energy" href="https://ieeks.github.io/gmail-pdf-sync/" target="_blank" rel="noreferrer">
+      <a class="tool-card card-energy" data-cat="home" href="https://ieeks.github.io/gmail-pdf-sync/" target="_blank" rel="noreferrer">
         <span class="tool-icon" aria-hidden="true">
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="3 12 7 12 10 7 14 18 17 12 21 12"/>
@@ -151,12 +173,12 @@
         <div class="tool-type">Home · Analytics</div>
         <div class="tool-desc">Electricity consumption overview. Tariff comparison, monthly trends, cost breakdown.</div>
         <div class="tool-footer">
-          <span class="tool-status"><span class="dot live"></span>live</span>
+          <span class="tool-status status-live"><span class="dot live"></span><b>live</b></span>
           <span class="tool-arrow">↗</span>
         </div>
       </a>
 
-      <a class="tool-card card-sublist" href="https://ieeks.github.io/sublist-web/" target="_blank" rel="noreferrer">
+      <a class="tool-card card-sublist" data-cat="money" href="https://ieeks.github.io/sublist-web/" target="_blank" rel="noreferrer">
         <span class="tool-icon" aria-hidden="true">
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="4" width="18" height="16" rx="3"/>
@@ -172,12 +194,12 @@
         <div class="tool-type">Personal · Subscription Tracking</div>
         <div class="tool-desc">Premium subscription tracker with Apple-leaning UI, dashboard overview, renewals, and detail panels.</div>
         <div class="tool-footer">
-          <span class="tool-status"><span class="dot live"></span>live</span>
+          <span class="tool-status status-live"><span class="dot live"></span><b>live</b></span>
           <span class="tool-arrow">↗</span>
         </div>
       </a>
 
-      <a class="tool-card card-familienbonus" href="https://ieeks.github.io/familienbonus/" target="_blank" rel="noreferrer">
+      <a class="tool-card card-familienbonus" data-cat="tax family" href="https://ieeks.github.io/familienbonus/" target="_blank" rel="noreferrer">
         <span class="tool-icon" aria-hidden="true">
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <path d="M5 20V11l7-6 7 6v9Z"/>
@@ -190,12 +212,12 @@
         <div class="tool-type">AT Steuer · Aufteilungsrechner</div>
         <div class="tool-desc">Familienbonus Plus optimal auf beide Elternteile aufteilen. Tarifstufen 2024–2026, Zuteilung je Kind, Aufteilungspflicht ab 2027.</div>
         <div class="tool-footer">
-          <span class="tool-status"><span class="dot live"></span>live</span>
+          <span class="tool-status status-live"><span class="dot live"></span><b>live</b></span>
           <span class="tool-arrow">↗</span>
         </div>
       </a>
 
-      <a class="tool-card card-ortstaxe" href="https://manuel.tools/ortstaxe-wien/" target="_blank" rel="noreferrer">
+      <a class="tool-card card-ortstaxe" data-cat="tax money" href="https://manuel.tools/ortstaxe-wien/" target="_blank" rel="noreferrer">
         <span class="tool-icon" aria-hidden="true">
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 20V6"/>
@@ -208,12 +230,12 @@
         <div class="tool-type">AT Steuer · Airbnb Meldung</div>
         <div class="tool-desc">Wiener Ortstaxe aus dem Airbnb-CSV-Export. Meldebeträge pro Monat, Satzwechsel 2026 und 2027, 90-Tage-Zähler der Bauordnung.</div>
         <div class="tool-footer">
-          <span class="tool-status"><span class="dot live"></span>live</span>
+          <span class="tool-status status-live"><span class="dot live"></span><b>live</b></span>
           <span class="tool-arrow">↗</span>
         </div>
       </a>
 
-      <a class="tool-card card-etf" href="https://ieeks.github.io/etf-rechner/" target="_blank" rel="noreferrer">
+      <a class="tool-card card-etf" data-cat="money" href="https://ieeks.github.io/etf-rechner/" target="_blank" rel="noreferrer">
         <span class="tool-icon" aria-hidden="true">
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
@@ -224,12 +246,12 @@
         <div class="tool-type">Invest · Sparplan Kalkulator</div>
         <div class="tool-desc">Sparplan-Simulator für ETF-Investments. Zinseszins, Einmalanlage vs. monatliche Rate, Kostenvergleich.</div>
         <div class="tool-footer">
-          <span class="tool-status"><span class="dot live"></span>live</span>
+          <span class="tool-status status-live"><span class="dot live"></span><b>live</b></span>
           <span class="tool-arrow">↗</span>
         </div>
       </a>
 
-      <a class="tool-card card-finance" href="https://ieeks.github.io/finance-dashboard/" target="_blank" rel="noreferrer">
+      <a class="tool-card card-finance" data-cat="money" href="https://ieeks.github.io/finance-dashboard/" target="_blank" rel="noreferrer">
         <span class="tool-icon" aria-hidden="true">
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <rect x="2" y="3" width="20" height="14" rx="2"/>
@@ -242,12 +264,12 @@
         <div class="tool-type">Banking · PDF Import · AI</div>
         <div class="tool-desc">easybank/BAWAG PDF statement parser. AI categorization, receipt matching, monthly overview.</div>
         <div class="tool-footer">
-          <span class="tool-status"><span class="dot wip"></span>in progress</span>
+          <span class="tool-status status-wip"><span class="dot wip"></span><b>in progress</b></span>
           <span class="tool-arrow">↗</span>
         </div>
       </a>
 
-      <a class="tool-card card-wanderly" href="https://manuel.tools/wanderly/" target="_blank" rel="noreferrer">
+      <a class="tool-card card-wanderly" data-cat="family" href="https://manuel.tools/wanderly/" target="_blank" rel="noreferrer">
         <span class="tool-icon" aria-hidden="true">
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <path d="M22 2L11 13"/>
@@ -258,12 +280,12 @@
         <div class="tool-type">Family · Travel Dashboard</div>
         <div class="tool-desc">All travel bookings in one place — flights, hotels, rental cars, insurance, costs and documents. Shareable with family.</div>
         <div class="tool-footer">
-          <span class="tool-status"><span class="dot live"></span>live</span>
+          <span class="tool-status status-live"><span class="dot live"></span><b>live</b></span>
           <span class="tool-arrow">↗</span>
         </div>
       </a>
 
-      <a class="tool-card card-apikey" href="https://manuel.tools/apikey-app/" target="_blank" rel="noreferrer">
+      <a class="tool-card card-apikey" data-cat="dev" href="https://manuel.tools/apikey-app/" target="_blank" rel="noreferrer">
         <span class="tool-icon" aria-hidden="true">
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
@@ -273,12 +295,12 @@
         <div class="tool-type">Dev · Key Vault</div>
         <div class="tool-desc">Manage and organize API keys across projects. Secure local storage, quick copy, expiry tracking.</div>
         <div class="tool-footer">
-          <span class="tool-status"><span class="dot wip"></span>in progress</span>
+          <span class="tool-status status-wip"><span class="dot wip"></span><b>in progress</b></span>
           <span class="tool-arrow">↗</span>
         </div>
       </a>
 
-      <a class="tool-card card-snipvault" href="https://ieeks.github.io/snipvault/" target="_blank" rel="noreferrer">
+      <a class="tool-card card-snipvault" data-cat="dev" href="https://ieeks.github.io/snipvault/" target="_blank" rel="noreferrer">
         <span class="tool-icon" aria-hidden="true">
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="16 18 22 12 16 6"/>
@@ -289,7 +311,7 @@
         <div class="tool-type">Dev · Snippet Manager</div>
         <div class="tool-desc">Personal code snippet manager. Syntax highlighting, categories, keyboard navigation. localStorage + JSON export.</div>
         <div class="tool-footer">
-          <span class="tool-status"><span class="dot live"></span>live</span>
+          <span class="tool-status status-live"><span class="dot live"></span><b>live</b></span>
           <span class="tool-arrow">↗</span>
         </div>
       </a>
@@ -335,9 +357,10 @@
 </footer>
 
 <!-- Design Toggle -->
-<div class="design-toggle" role="group" aria-label="Design wechseln">
-  <button id="btn-v1" onclick="setDesign('v1')" aria-pressed="true">v1 · original</button>
-  <button id="btn-v2" onclick="setDesign('v2')" aria-pressed="false">v2 · trimmy</button>
+<div class="design-toggle" id="design-toggle" role="group" aria-label="Design wechseln">
+  <button type="button" data-design="v1" aria-pressed="true">v1 · original</button>
+  <button type="button" data-design="v2" aria-pressed="false">v2 · trimmy</button>
+  <button type="button" data-design="v3" aria-pressed="false">v3 · lagoon</button>
 </div>
 
 <script src="script.js"></script>
