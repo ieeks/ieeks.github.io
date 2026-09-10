@@ -9,35 +9,22 @@
   <!-- 1. Dark Mode Init — MUSS vor CSS kommen, blocking -->
   <script>
     (function() {
-      // Theme
       var saved;
       try { saved = localStorage.getItem('theme'); } catch(e) {}
       if (!saved) saved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
       document.documentElement.setAttribute('data-theme', saved);
-
-      // Design
-      var design;
-      var forced = /[?&]design=(v[0-9]+)/.exec(location.search);
-      if (forced) {
-        design = forced[1];
-        try { localStorage.setItem('design', design); } catch(e) {}
-      } else {
-        try { design = localStorage.getItem('design'); } catch(e) {}
-      }
-      if (['v1', 'v2', 'v3'].indexOf(design) === -1) design = 'v1';
-      document.documentElement.setAttribute('data-design', design);
     })();
   </script>
   <!-- 2. Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..900,0..100,0..1;1,9..144,400..900,0..100,0..1&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <!-- 3. CSS -->
-  <link rel="stylesheet" href="styles.css?v=3">
+  <link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
 
-<!-- Grain overlay (V2 only, shown via CSS) -->
+<!-- Grain overlay -->
 <svg class="grain" aria-hidden="true">
   <filter id="grain-filter">
     <feTurbulence type="fractalNoise" baseFrequency="0.68" numOctaves="3" stitchTiles="stitch"/>
@@ -46,7 +33,7 @@
   <rect width="100%" height="100%" filter="url(#grain-filter)"/>
 </svg>
 
-<!-- Crop marks (V2 only, shown via CSS) -->
+<!-- Crop marks -->
 <span class="crop-mark tl" aria-hidden="true">+</span>
 <span class="crop-mark tr" aria-hidden="true">+</span>
 
@@ -54,7 +41,7 @@
   <header>
     <nav>
       <a href="/" class="site-logo-link" aria-label="ieeks home">
-        <svg width="36" height="36" viewBox="0 0 100 100" aria-label="ieeks logo" role="img" class="site-logo-svg">
+        <svg width="36" height="36" viewBox="0 0 100 100" aria-hidden="true" class="site-logo-svg">
           <rect x="10" y="10" width="80" height="80" fill="none" stroke="currentColor" stroke-width="3"/>
           <text x="50" y="62" text-anchor="middle" font-size="42" fill="currentColor" font-family="serif">ie</text>
         </svg>
@@ -64,10 +51,10 @@
         <li><a href="https://github.com/ieeks" target="_blank" rel="noreferrer">github</a></li>
         <li>
           <button aria-label="Theme wechseln" class="theme-toggle" onclick="toggleTheme()">
-            <svg class="icon-moon" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <svg class="icon-moon" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-            <svg class="icon-sun" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <svg class="icon-sun" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
               <circle cx="12" cy="12" r="5"/>
               <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke-linecap="round"/>
             </svg>
@@ -79,19 +66,12 @@
 
   <section class="intro">
     <div class="intro-eyebrow">MANUEL · VIENNA</div>
-    <h1 class="intro-heading" id="scramble-heading">
-      <span class="hero-word" data-scramble data-text="personal">personal</span>
-      <span class="hero-word hero-word-em" data-scramble data-text="toolbox~">toolbox~</span>
-    </h1>
+    <h1 class="intro-heading" id="scramble-heading" data-scramble data-text="personal toolbox~">personal toolbox~</h1>
     <p class="intro-bio">A small collection of <strong>tools I built for myself</strong> — for work, for home, for family. EU VAT calculations, EV charging logs, LEGO tracking. Nothing fancy, everything useful.</p>
-    <svg class="hero-wave" viewBox="0 0 400 20" preserveAspectRatio="none" aria-hidden="true">
-      <path d="M0,12 C25,2 45,2 70,12 C95,22 115,22 140,12 C165,2 185,2 210,12 C235,22 255,22 280,12 C305,2 325,2 350,12 C375,22 385,22 400,14"
-            fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    </svg>
   </section>
 
   <section class="tools-section" id="tools">
-    <div class="section-label">Tools</div>
+    <h2 class="section-label">Tools</h2>
     <div class="tool-filters" role="group" aria-label="Tools filtern">
       <button type="button" data-filter="all" aria-pressed="true">Alle</button>
       <button type="button" data-filter="tax" aria-pressed="false">Steuer</button>
@@ -103,7 +83,7 @@
     <p class="tool-count" id="tool-count" aria-live="polite"></p>
     <div class="tools-grid" id="tools-grid">
 
-      <a class="tool-card card-vat" data-cat="tax" href="https://ieeks.github.io/eu-vat-reihengeschaeftrechner/" target="_blank" rel="noreferrer">
+      <a class="tool-card" data-cat="tax" href="https://manuel.tools/eu-vat-reihengeschaeftrechner/" target="_blank" rel="noreferrer">
         <span class="tool-icon" aria-hidden="true">
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <rect x="5" y="3.5" width="14" height="17" rx="2.5"/>
@@ -114,16 +94,16 @@
             <line x1="8" y1="16" x2="11" y2="16"/>
           </svg>
         </span>
-        <div class="tool-name">VAT Calculator</div>
+        <h3 class="tool-name">VAT Calculator</h3>
         <div class="tool-type">EU Tax · Reihengeschäft</div>
         <div class="tool-desc">Chain transaction analysis across EU member states. Tax codes, UID validation, SAP mapping.</div>
         <div class="tool-footer">
           <span class="tool-status status-live"><span class="dot live"></span><b>live</b></span>
-          <span class="tool-arrow">↗</span>
+          <span class="tool-arrow" aria-hidden="true">↗</span>
         </div>
       </a>
 
-      <a class="tool-card card-lf" data-cat="home" href="https://ieeks.github.io/wallbox/" target="_blank" rel="noreferrer">
+      <a class="tool-card" data-cat="home" href="https://manuel.tools/wallbox/" target="_blank" rel="noreferrer">
         <span class="tool-icon" aria-hidden="true">
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <rect x="2" y="7" width="16" height="11" rx="2"/>
@@ -131,18 +111,18 @@
             <path d="M9 10l-2 3h5l-2 3"/>
           </svg>
         </span>
-        <div class="tool-name">Wallbox</div>
+        <h3 class="tool-name">Wallbox</h3>
         <div class="tool-type">EV Charging · Firebase</div>
         <div class="tool-desc">Home charging tracker for BYD Seal U. go-e CSV import, Wien Energie tariffs, Firestore sync.</div>
         <div class="tool-footer">
           <span class="tool-status status-live"><span class="dot live"></span><b>live</b></span>
-          <span class="tool-arrow">↗</span>
+          <span class="tool-arrow" aria-hidden="true">↗</span>
         </div>
       </a>
 
-      <a class="tool-card card-lego" data-cat="family" href="https://ieeks.github.io/lego-tracker/" target="_blank" rel="noreferrer">
+      <a class="tool-card" data-cat="family" href="https://manuel.tools/lego-tracker/" target="_blank" rel="noreferrer">
         <span class="tool-icon" aria-hidden="true">
-          <svg fill="none" height="17" viewBox="0 0 28 16" width="30" xmlns="http://www.w3.org/2000/svg" style="color:currentColor">
+          <svg fill="none" height="17" viewBox="0 0 28 16" width="30" xmlns="http://www.w3.org/2000/svg">
             <rect fill="currentColor" height="14" rx="1" width="28" x="0" y="2" />
             <circle cx="4"  cy="2" fill="currentColor" r="2" />
             <circle cx="11" cy="2" fill="currentColor" r="2" />
@@ -154,31 +134,31 @@
             <circle cx="25" cy="7" fill="currentColor" opacity="0.3" r="2" />
           </svg>
         </span>
-        <div class="tool-name">LEGO Tracker</div>
+        <h3 class="tool-name">LEGO Tracker</h3>
         <div class="tool-type">Family · Wishlist</div>
         <div class="tool-desc">Wishlist and collection tracker built for grandparents. No login, simple interface.</div>
         <div class="tool-footer">
           <span class="tool-status status-live"><span class="dot live"></span><b>live</b></span>
-          <span class="tool-arrow">↗</span>
+          <span class="tool-arrow" aria-hidden="true">↗</span>
         </div>
       </a>
 
-      <a class="tool-card card-energy" data-cat="home" href="https://ieeks.github.io/gmail-pdf-sync/" target="_blank" rel="noreferrer">
+      <a class="tool-card" data-cat="home" href="https://manuel.tools/gmail-pdf-sync/" target="_blank" rel="noreferrer">
         <span class="tool-icon" aria-hidden="true">
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="3 12 7 12 10 7 14 18 17 12 21 12"/>
           </svg>
         </span>
-        <div class="tool-name">Energy Dashboard</div>
+        <h3 class="tool-name">Energy Dashboard</h3>
         <div class="tool-type">Home · Analytics</div>
         <div class="tool-desc">Electricity consumption overview. Tariff comparison, monthly trends, cost breakdown.</div>
         <div class="tool-footer">
           <span class="tool-status status-live"><span class="dot live"></span><b>live</b></span>
-          <span class="tool-arrow">↗</span>
+          <span class="tool-arrow" aria-hidden="true">↗</span>
         </div>
       </a>
 
-      <a class="tool-card card-sublist" data-cat="money" href="https://ieeks.github.io/sublist-web/" target="_blank" rel="noreferrer">
+      <a class="tool-card" data-cat="money" href="https://manuel.tools/sublist-web/" target="_blank" rel="noreferrer">
         <span class="tool-icon" aria-hidden="true">
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="4" width="18" height="16" rx="3"/>
@@ -190,16 +170,16 @@
             <circle cx="6.2" cy="17" r="0.7" fill="currentColor" stroke="none"/>
           </svg>
         </span>
-        <div class="tool-name">Sublist</div>
+        <h3 class="tool-name">Sublist</h3>
         <div class="tool-type">Personal · Subscription Tracking</div>
         <div class="tool-desc">Premium subscription tracker with Apple-leaning UI, dashboard overview, renewals, and detail panels.</div>
         <div class="tool-footer">
           <span class="tool-status status-live"><span class="dot live"></span><b>live</b></span>
-          <span class="tool-arrow">↗</span>
+          <span class="tool-arrow" aria-hidden="true">↗</span>
         </div>
       </a>
 
-      <a class="tool-card card-familienbonus" data-cat="tax family" href="https://ieeks.github.io/familienbonus/" target="_blank" rel="noreferrer">
+      <a class="tool-card" data-cat="tax family" href="https://manuel.tools/familienbonus/" target="_blank" rel="noreferrer">
         <span class="tool-icon" aria-hidden="true">
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <path d="M5 20V11l7-6 7 6v9Z"/>
@@ -208,16 +188,16 @@
             <path d="M18 4.5v3M16.5 6h3"/>
           </svg>
         </span>
-        <div class="tool-name">Familienbonus</div>
+        <h3 class="tool-name">Familienbonus</h3>
         <div class="tool-type">AT Steuer · Aufteilungsrechner</div>
         <div class="tool-desc">Familienbonus Plus optimal auf beide Elternteile aufteilen. Tarifstufen 2024–2026, Zuteilung je Kind, Aufteilungspflicht ab 2027.</div>
         <div class="tool-footer">
           <span class="tool-status status-live"><span class="dot live"></span><b>live</b></span>
-          <span class="tool-arrow">↗</span>
+          <span class="tool-arrow" aria-hidden="true">↗</span>
         </div>
       </a>
 
-      <a class="tool-card card-ortstaxe" data-cat="tax money" href="https://manuel.tools/ortstaxe-wien/" target="_blank" rel="noreferrer">
+      <a class="tool-card" data-cat="tax money" href="https://manuel.tools/ortstaxe-wien/" target="_blank" rel="noreferrer">
         <span class="tool-icon" aria-hidden="true">
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 20V6"/>
@@ -226,32 +206,32 @@
             <circle cx="7" cy="13.5" r="1.7"/>
           </svg>
         </span>
-        <div class="tool-name">Ortstaxe Wien</div>
+        <h3 class="tool-name">Ortstaxe Wien</h3>
         <div class="tool-type">AT Steuer · Airbnb Meldung</div>
         <div class="tool-desc">Wiener Ortstaxe aus dem Airbnb-CSV-Export. Meldebeträge pro Monat, Satzwechsel 2026 und 2027, 90-Tage-Zähler der Bauordnung.</div>
         <div class="tool-footer">
           <span class="tool-status status-live"><span class="dot live"></span><b>live</b></span>
-          <span class="tool-arrow">↗</span>
+          <span class="tool-arrow" aria-hidden="true">↗</span>
         </div>
       </a>
 
-      <a class="tool-card card-etf" data-cat="money" href="https://ieeks.github.io/etf-rechner/" target="_blank" rel="noreferrer">
+      <a class="tool-card" data-cat="money" href="https://manuel.tools/etf-rechner/" target="_blank" rel="noreferrer">
         <span class="tool-icon" aria-hidden="true">
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
             <polyline points="16 7 22 7 22 13"/>
           </svg>
         </span>
-        <div class="tool-name">ETF Rechner</div>
+        <h3 class="tool-name">ETF Rechner</h3>
         <div class="tool-type">Invest · Sparplan Kalkulator</div>
         <div class="tool-desc">Sparplan-Simulator für ETF-Investments. Zinseszins, Einmalanlage vs. monatliche Rate, Kostenvergleich.</div>
         <div class="tool-footer">
           <span class="tool-status status-live"><span class="dot live"></span><b>live</b></span>
-          <span class="tool-arrow">↗</span>
+          <span class="tool-arrow" aria-hidden="true">↗</span>
         </div>
       </a>
 
-      <a class="tool-card card-finance" data-cat="money" href="https://ieeks.github.io/finance-dashboard/" target="_blank" rel="noreferrer">
+      <a class="tool-card" data-cat="money" href="https://manuel.tools/finance-dashboard/" target="_blank" rel="noreferrer">
         <span class="tool-icon" aria-hidden="true">
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <rect x="2" y="3" width="20" height="14" rx="2"/>
@@ -260,59 +240,59 @@
             <polyline points="6 13 9 9 13 11 18 7"/>
           </svg>
         </span>
-        <div class="tool-name">Finance Dashboard</div>
+        <h3 class="tool-name">Finance Dashboard</h3>
         <div class="tool-type">Banking · PDF Import · AI</div>
         <div class="tool-desc">easybank/BAWAG PDF statement parser. AI categorization, receipt matching, monthly overview.</div>
         <div class="tool-footer">
           <span class="tool-status status-wip"><span class="dot wip"></span><b>in progress</b></span>
-          <span class="tool-arrow">↗</span>
+          <span class="tool-arrow" aria-hidden="true">↗</span>
         </div>
       </a>
 
-      <a class="tool-card card-wanderly" data-cat="family" href="https://manuel.tools/wanderly/" target="_blank" rel="noreferrer">
+      <a class="tool-card" data-cat="family" href="https://manuel.tools/wanderly/" target="_blank" rel="noreferrer">
         <span class="tool-icon" aria-hidden="true">
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <path d="M22 2L11 13"/>
             <path d="M22 2L15 22 11 13 2 9l20-7z"/>
           </svg>
         </span>
-        <div class="tool-name">Wanderly</div>
+        <h3 class="tool-name">Wanderly</h3>
         <div class="tool-type">Family · Travel Dashboard</div>
         <div class="tool-desc">All travel bookings in one place — flights, hotels, rental cars, insurance, costs and documents. Shareable with family.</div>
         <div class="tool-footer">
           <span class="tool-status status-live"><span class="dot live"></span><b>live</b></span>
-          <span class="tool-arrow">↗</span>
+          <span class="tool-arrow" aria-hidden="true">↗</span>
         </div>
       </a>
 
-      <a class="tool-card card-apikey" data-cat="dev" href="https://manuel.tools/apikey-app/" target="_blank" rel="noreferrer">
+      <a class="tool-card" data-cat="dev" href="https://manuel.tools/apikey-app/" target="_blank" rel="noreferrer">
         <span class="tool-icon" aria-hidden="true">
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
           </svg>
         </span>
-        <div class="tool-name">API Key Manager</div>
+        <h3 class="tool-name">API Key Manager</h3>
         <div class="tool-type">Dev · Key Vault</div>
         <div class="tool-desc">Manage and organize API keys across projects. Secure local storage, quick copy, expiry tracking.</div>
         <div class="tool-footer">
           <span class="tool-status status-wip"><span class="dot wip"></span><b>in progress</b></span>
-          <span class="tool-arrow">↗</span>
+          <span class="tool-arrow" aria-hidden="true">↗</span>
         </div>
       </a>
 
-      <a class="tool-card card-snipvault" data-cat="dev" href="https://ieeks.github.io/snipvault/" target="_blank" rel="noreferrer">
+      <a class="tool-card" data-cat="dev" href="https://manuel.tools/snipvault/" target="_blank" rel="noreferrer">
         <span class="tool-icon" aria-hidden="true">
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="16 18 22 12 16 6"/>
             <polyline points="8 6 2 12 8 18"/>
           </svg>
         </span>
-        <div class="tool-name">SnipVault</div>
+        <h3 class="tool-name">SnipVault</h3>
         <div class="tool-type">Dev · Snippet Manager</div>
         <div class="tool-desc">Personal code snippet manager. Syntax highlighting, categories, keyboard navigation. localStorage + JSON export.</div>
         <div class="tool-footer">
           <span class="tool-status status-live"><span class="dot live"></span><b>live</b></span>
-          <span class="tool-arrow">↗</span>
+          <span class="tool-arrow" aria-hidden="true">↗</span>
         </div>
       </a>
 
@@ -320,7 +300,7 @@
   </section>
 
   <div class="stack-block">
-    <div class="stack-label">Stack</div>
+    <h2 class="stack-label">Stack</h2>
     <p>No shared framework, no monorepo — every tool as simple as it can get away with. Plain <code>HTML/CSS/JS</code> where that's enough, <code>React</code> where it isn't. Deployed via <code>GitHub Pages</code>, sync via <code>Firebase Firestore</code>.</p>
   </div>
 </div>
@@ -329,12 +309,12 @@
   <div class="container">
     <div class="footer-grid">
       <div class="footer-left">
-        <span>Vienna, AT · <span id="current-time">--:--</span> CET</span>
+        <span>Vienna, AT · <span id="current-time">--:--</span> <span id="current-tz">CET</span></span>
         <span>built for everyday life</span>
       </div>
       <div class="footer-center">
         <div class="monogram" aria-hidden="true">ie</div>
-        <span class="footer-copy">© 2026</span>
+        <span class="footer-copy">© <span id="current-year">2026</span></span>
       </div>
       <div class="footer-right">
         <a href="https://github.com/ieeks" target="_blank" rel="noreferrer">
@@ -356,13 +336,6 @@
   </div>
 </footer>
 
-<!-- Design Toggle -->
-<div class="design-toggle" id="design-toggle" role="group" aria-label="Design wechseln">
-  <button type="button" data-design="v1" aria-pressed="true">v1 · original</button>
-  <button type="button" data-design="v2" aria-pressed="false">v2 · trimmy</button>
-  <button type="button" data-design="v3" aria-pressed="false">v3 · lagoon</button>
-</div>
-
-<script src="script.js"></script>
+<script src="script.js?v=4"></script>
 </body>
 </html>
