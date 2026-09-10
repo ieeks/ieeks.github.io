@@ -1,73 +1,91 @@
-# ieeks.github.io — v2 Redesign Handoff
+# ieeks.github.io — Landing Page
 
 ## Projekt-Ziel
-Redesign der bestehenden Landing Page `ieeks.github.io` als **v2**.
-Kein Framework, kein Build-Step — exakt wie bisher: `index.html` + `styles.css` + `script.js`.
+Statische persönliche Landing Page, die unter **`manuel.tools`** ausgeliefert wird
+(siehe `CNAME`). Kein Framework, kein Build-Step, keine Dependencies —
+drei Dateien, die man direkt im Browser öffnen kann.
 
-## Bestehende Dateistruktur beibehalten
+## Dateistruktur
 ```
 index.html    ← Seitenstruktur
-styles.css    ← Layout, Theme, Responsive
-script.js     ← Dark Mode Toggle, Live-Uhrzeit, Scramble-Effekt
+styles.css    ← Tokens, Layout, Komponenten, Dark Mode, Responsive
+script.js     ← Dark Mode Toggle, Live-Uhrzeit, Scramble-Effekt, Tool-Filter
+CNAME         ← manuel.tools
+apple-touch-icon.png
 ```
 
-## Was sich ändert (v2)
-- Komplett neues Design nach ukint-vs.github.io Design-System (siehe unten)
-- Neuer Scramble-Effekt auf dem Heading
-- iOS-inspirierte Tool-Kacheln
-- Neuer Footer mit Live-Uhrzeit Wien
+Es gibt **keine** Design-Varianten mehr. Frühere Versionen dieses Repos hatten
+drei parallele Designs (`data-design="v1|v2|v3"`) mit einem Umschalter unten auf
+der Seite. Das ist entfernt — das ehemalige **v2 („Trimmy")** ist jetzt das
+einzige Design und liegt direkt in der Basis, ohne `[data-design]`-Selektoren.
+Bitte keine neue Varianten-Ebene wieder einführen.
 
 ---
 
 ## Design System
 
+Harte Konturen, versetzter Farbschatten statt Weichzeichnung, Grain-Overlay,
+Crop-Marks in den oberen Ecken — Print-/Riso-Anmutung.
+
 ### CSS Custom Properties
 
 **Light Mode (`:root`):**
 ```css
---bg: #f6f4f0
---bg-warm: #eee9e2
+--bg: #eee8db
+--bg-warm: #e8e2d5
 --bg-card: #ffffff
 --text: #1a1a1a
 --text-secondary: #5a5550
 --text-tertiary: #8a847d
 --border: #d8d2ca
 --border-light: #e8e3dc
---accent: #c44b28        /* Terrakotta */
+--border-hard: #1a1a1a       /* harte Kontur Kacheln + Filter-Pills */
+--accent: #c44b28            /* Terrakotta */
 --accent-soft: rgba(196, 75, 40, 0.07)
 --accent-border: rgba(196, 75, 40, 0.22)
+--on-accent: #ffffff         /* Text auf accent-gefüllter Fläche */
 --ink: #2c2926
 ```
 
 **Dark Mode (`[data-theme="dark"]`):**
 ```css
---bg: #2b2e33
---bg-warm: #333740
+--bg: #1e2024
+--bg-warm: #23272d
 --bg-card: #32363d
 --text: #e0ddd8
 --text-secondary: #a8a29e
 --text-tertiary: #8a847d
 --border: #3e4249
 --border-light: #353940
---accent: #00d2ff        /* Cyan */
+--border-hard: #4a4540
+--accent: #00d2ff            /* Cyan */
 --accent-soft: rgba(0, 210, 255, 0.09)
 --accent-border: rgba(0, 210, 255, 0.25)
+--on-accent: #1e2024
 --ink: #f6f3f3
 ```
+
+`--border-hard` und `--on-accent` existieren, damit Kachel-Kontur und
+Pill-Beschriftung in beiden Themes aus einem Token kommen. Vorher standen
+`#1a1a1a` / `#4a4540` / `#c44b28` / `#00d2ff` in acht Regeln hardcodiert.
+Der versetzte Schatten ist immer `var(--accent)`.
 
 ### Fonts (Google Fonts)
 - **Body/UI:** `Instrument Sans` (400, 500, 600)
 - **Mono:** `IBM Plex Mono` (300, 300i, 400, 500)
-- **Serif:** `Source Serif 4` (300, 400, 300i) — nur für Blog falls vorhanden
 
-### Max-width: 720px, padding: 0 2rem (mobile: 0 1.2rem)
+Kein Serif-Font. `Fraunces` wurde mit v3 entfernt — falls es je zurückkommt,
+bitte nicht mit allen vier Variable-Axes in Roman *und* Italic laden.
+
+### Maße
+Max-width **720px**, Padding `0 2rem` (mobil `0 1.2rem`), `--radius-card: 20px`.
 
 ---
 
 ## Dark Mode
 
 Theme via `data-theme` Attribut auf `<html>`.
-**Kritisch:** Init-Script muss das ERSTE im `<head>` sein (vor CSS) um FOUC zu vermeiden:
+**Kritisch:** Init-Script muss das ERSTE im `<head>` sein (vor CSS), um FOUC zu vermeiden:
 
 ```js
 (function() {
@@ -78,14 +96,8 @@ Theme via `data-theme` Attribut auf `<html>`.
 })();
 ```
 
-Toggle-Funktion:
-```js
-function toggleTheme() {
-  var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', next);
-  try { localStorage.setItem('theme', next); } catch(e) {}
-}
-```
+`localStorage` immer in `try/catch` — sonst wirft es im Private Mode und bei
+blockierten Site-Daten.
 
 ---
 
@@ -97,28 +109,57 @@ function toggleTheme() {
 
 ### Intro / Hero
 - Eyebrow: `MANUEL · VIENNA` (IBM Plex Mono, 0.7rem, uppercase, text-tertiary)
-- **Heading: Scramble-Effekt** (siehe unten) — `personal toolbox~`
+- **Heading: Scramble-Effekt** — `personal toolbox~`, ein `<h1>` mit
+  `data-scramble` + `data-text`
 - Bio-Text: Instrument Sans, 0.97rem, text-secondary
 
-### Tools Grid (2×2, mobile 1×4)
-4 Kacheln als `<a>`-Tags:
+### Tool-Filter
+Pills über `data-cat` auf den Karten, mit Live-Counter (`#tool-count`,
+`aria-live="polite"`). Kategorien: `all` · `tax` · `money` · `family` · `home` · `dev`.
+Eine Karte kann mehrere Kategorien tragen (space-separiert, z. B. `data-cat="tax family"`).
+`aria-pressed` wird von `applyFilter()` gesetzt und ist zugleich der CSS-Hook
+für den aktiven Zustand.
 
-| Emoji | Name | Type | URL | Status |
-|-------|------|------|-----|--------|
-| 🧾 | VAT Calculator | EU Tax · Reihengeschäft | `/vat` | live |
-| ⚡ | Ladefuchs | EV Charging · Firebase | `/wallbox` | live |
-| 🧱 | LEGO Tracker | Family · Wishlist | `/lego` | live |
-| 📊 | Energy Dashboard | Home · Analytics | `/energy` | in progress |
-| 📋 | Sublist | Personal · Subscription Tracking | `/sublist-web` | in progress |
+### Tools Grid (2 Spalten, ≤520px einspaltig)
+
+Aktuell 12 Karten als `<a>`-Tags. Alle Links zeigen auf `manuel.tools/…` —
+nicht auf `ieeks.github.io/…`, das wäre ein zusätzlicher Redirect-Hop.
+
+| Name | Type | Pfad | Status | `data-cat` |
+|------|------|------|--------|-----------|
+| VAT Calculator | EU Tax · Reihengeschäft | `/eu-vat-reihengeschaeftrechner/` | live | `tax` |
+| Wallbox | EV Charging · Firebase | `/wallbox/` | live | `home` |
+| LEGO Tracker | Family · Wishlist | `/lego-tracker/` | live | `family` |
+| Energy Dashboard | Home · Analytics | `/gmail-pdf-sync/` | live | `home` |
+| Sublist | Personal · Subscription Tracking | `/sublist-web/` | live | `money` |
+| Familienbonus | AT Steuer · Aufteilungsrechner | `/familienbonus/` | live | `tax family` |
+| Ortstaxe Wien | AT Steuer · Airbnb Meldung | `/ortstaxe-wien/` | live | `tax money` |
+| ETF Rechner | Invest · Sparplan Kalkulator | `/etf-rechner/` | live | `money` |
+| Finance Dashboard | Banking · PDF Import · AI | `/finance-dashboard/` | in progress | `money` |
+| Wanderly | Family · Travel Dashboard | `/wanderly/` | live | `family` |
+| API Key Manager | Dev · Key Vault | `/apikey-app/` | in progress | `dev` |
+| SnipVault | Dev · Snippet Manager | `/snipvault/` | live | `dev` |
+
+> **Achtung, sieht wie ein Bug aus, ist keiner:** „Energy Dashboard" zeigt auf
+> `/gmail-pdf-sync/`. Ein Repo `energy-dashboard` existiert nicht — das Tool
+> liegt im Repo `ieeks/gmail-pdf-sync` (es zieht die Energieabrechnungen als
+> PDF aus Gmail). Bitte nicht „korrigieren".
 
 **Kachel-Design:**
-- `background: var(--bg-card)`, `border: 1px solid var(--border-light)`
-- `border-radius: 20px`, `padding: 1.8rem 1.6rem 1.5rem`, `min-height: 190px`
-- Hover: `translateY(-3px) scale(1.01)`, `box-shadow: 0 8px 28px rgba(0,0,0,0.08)`
-- Hover: farbiger 3px Top-Stripe (`--tool-color`) erscheint
-- Per-Kachel Stripe-Farben: VAT `#c44b28`, Ladefuchs `#22c55e`, LEGO `#f59e0b`, Energy `#6366f1`
+- `background: var(--bg-card)`, `border: 2px solid var(--border-hard)`
+- `border-radius: 20px`, `padding: 1.8rem 1.6rem 1.5rem`
+- `box-shadow: 3px 3px 0 var(--accent)` (versetzter harter Schatten)
+- Hover: `translate(-1px, -1px)` + Schatten auf `5px 5px 0`
+- Active: zurück auf `translate(0, 0)` + `3px 3px 0`
 - Status-Dot: grün (`#22c55e`) = live, amber (`#f59e0b`) = in progress
 - ↗ Arrow erscheint bei Hover (opacity 0 → 1)
+- Rise-Animation `card-rise` mit 45ms-Staffelung über `--i`, das
+  `applyFilter()` beim Rendern setzt. Unter `prefers-reduced-motion` aus.
+- Jede Karte braucht `target="_blank" rel="noreferrer"`.
+
+Es gibt **keine** Per-Kachel-Farben mehr. Die früheren `--tool-color`-Regeln
+gehörten zum Farbstreifen von v1/v3; v2 hat statt eines Streifens den
+versetzten Schatten, der einheitlich `--accent` nutzt.
 
 ### Stack-Block
 - `background: var(--bg-warm)`, border-radius 10px
@@ -126,91 +167,81 @@ function toggleTheme() {
 - Text mit `<code>`-Inline-Chips
 
 ### Footer (3-spaltig)
-- Links: `Vienna, AT · HH:MM CET` (Live-Uhrzeit!) + `built for everyday life`
-- Mitte: `ie`-Monogram Box + `© 2026`
+- Links: `Vienna, AT · HH:MM CEST` + `built for everyday life`
+  Uhrzeit **und** Zonenkürzel sind live (`#current-time`, `#current-tz`).
+- Mitte: `ie`-Monogram Box + `© <Jahr>` (`#current-year`, aus `Date`)
 - Rechts: GitHub + Mail Links mit SVG-Icons
 - Unten: `↑ back to top` Link
 
+### Overlays
+`.grain` (SVG `feTurbulence`, fixed, `opacity: 0.25`) und die beiden
+`.crop-mark`-Kreuze oben. Beide immer sichtbar — früher waren sie v2-exklusiv.
+
 ---
 
-## Scramble-Effekt (WICHTIG)
+## Live-Uhrzeit
 
-Für `personal toolbox~` Heading — **kein Canvas, reines JS auf dem `<h1>`**.
+Wien ist von Ende März bis Ende Oktober **CEST**, nicht CET. Das Kürzel wird
+darum mitformatiert und nicht ins HTML geschrieben:
 
 ```js
-const POOL = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&*~+-=.:';
-const DURATION = 650;
-
-function scramble(el) {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const final = el.getAttribute('data-text') || el.textContent || '';
-  el.setAttribute('data-text', final);
-  el.style.minWidth = el.offsetWidth + 'px';
-
-  const start = performance.now();
-  let running = true;
-
-  (function tick(now) {
-    const progress = Math.min((now - start) / DURATION, 1);
-    const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
-    const resolved = Math.floor(eased * final.length);
-
-    let out = '';
-    for (let i = 0; i < final.length; i++) {
-      if (i < resolved) out += final[i];
-      else if (final[i] === ' ') out += ' ';
-      else out += POOL[Math.floor(Math.random() * POOL.length)];
-    }
-    el.textContent = out;
-
-    if (progress < 1) requestAnimationFrame(tick);
-    else {
-      el.textContent = final;
-      el.style.minWidth = '';
-    }
-  })(start);
-}
+var clockFormat = new Intl.DateTimeFormat('en-GB', {
+  timeZone: 'Europe/Vienna',
+  hour: '2-digit', minute: '2-digit', hour12: false,
+  timeZoneName: 'short'
+});
 ```
 
-**Trigger:**
-- `astro:page-load` → beim ersten Load + bei View Transitions
-- Zusätzlich: `mouseenter` und `touchstart` auf dem Element
+`formatToParts()` liefert `hour`/`minute` und `timeZoneName` getrennt
+(`en-GB` → `CET`/`CEST`; eine deutsche Locale gäbe `MEZ`/`MESZ`).
+
+Der Tick stellt sich nach jedem Lauf selbst neu auf die nächste Minutengrenze
+(`scheduleClock()` mit `setTimeout`, nicht `setInterval`) — damit driftet die
+Anzeige nicht und ist nie älter als die laufende Minute.
+
+---
+
+## Scramble-Effekt
+
+Für das `personal toolbox~` Heading — **kein Canvas, reines JS auf dem `<h1>`**.
+
+Läuft über *alle* `[data-scramble]`-Elemente gleichzeitig; aktuell ist das nur
+das `<h1>`, die Schleife bleibt aber generisch.
+
+Wichtige Details:
+- `isScrambling`-Guard, damit sich schnelle Hovers nicht überlagern
+- `prefers-reduced-motion: reduce` → gar nicht animieren
+- `el.style.minWidth` wird auf die gemessene Breite gepinnt und am Ende
+  wieder entfernt, sonst springt das Layout während des Laufs
+- Leerzeichen bleiben Leerzeichen, sonst zerfällt die Wortgrenze
+
+**Trigger:** `window load` (+120ms), zusätzlich `mouseenter` und `touchstart`
+auf dem Heading. (Kein `astro:page-load` — hier läuft kein Astro.)
 
 ---
 
 ## Datei-Aufteilung
 
-**`index.html`** — nur Struktur, keine Inline-Styles, keine Inline-Scripts außer dem Dark-Mode-Init-Script (muss als erstes im `<head>` stehen).
+**`index.html`** — nur Struktur. Keine Inline-Styles. Kein Inline-Script außer
+dem Dark-Mode-Init im `<head>`. Die Tool-URLs stehen hier, nicht in `script.js`.
 
-**`styles.css`** — alle CSS Custom Properties, Reset, Layout, Komponenten, Dark Mode, Responsive.
+**`styles.css`** — Custom Properties, Reset, Layout, Komponenten, Dark Mode, Responsive.
 
-**`script.js`** — Dark Mode Toggle, Live-Uhrzeit, Scramble-Effekt. Wird am Ende von `<body>` eingebunden.
+**`script.js`** — Theme-Toggle, Live-Uhrzeit, Scramble, Tool-Filter.
+Wird am Ende von `<body>` eingebunden.
 
-**`<head>`-Reihenfolge in index.html:**
-```html
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ieeks — Manuel's Tools</title>
-  <!-- 1. Dark Mode Init — MUSS vor CSS kommen, blocking -->
-  <script>
-    (function() {
-      var saved;
-      try { saved = localStorage.getItem('theme'); } catch(e) {}
-      if (!saved) saved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      document.documentElement.setAttribute('data-theme', saved);
-    })();
-  </script>
-  <!-- 2. Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-  <!-- 3. CSS -->
-  <link rel="stylesheet" href="styles.css">
-</head>
-```
+**`<head>`-Reihenfolge:** Init-Script → Fonts → CSS. Bei Änderungen an
+`styles.css`/`script.js` den `?v=`-Query in `index.html` mitziehen, sonst
+bekommen wiederkehrende Besucher eine gemischte Version.
+
+---
 
 ## GitHub Pages Deploy
-Kein Build-Step. `index.html` direkt im Root → GitHub Pages served es automatisch.
+Kein Build-Step. `index.html` im Root → wird direkt ausgeliefert.
+
+Die Tools liegen alle in **eigenen Repos** und werden als Project Pages unter
+`manuel.tools/<repo>/` ausgeliefert. Dieses Repo enthält nur die Landing Page —
+bitte keine Tool-Kopien als Unterordner hier einchecken.
 
 ---
 
@@ -220,53 +251,21 @@ Kein Build-Step. `index.html` direkt im Root → GitHub Pages served es automati
 - Dark Mode Accent bleibt `#00d2ff` (nicht zurück zu Orange)
 - Das `ie`-Logo bleibt als inline SVG mit `currentColor`
 - Scramble läuft auf dem Text-`<h1>`, KEIN Canvas für den Heading
+- Kein Build-Step, keine Dependencies, keine `[data-design]`-Varianten
 
----
+## Offen / bekannte Schwächen
 
-# v3 · Lagoon
-
-Dritte Design-Variante, umschaltbar über die Pille unten (`data-design="v3"`).
-v1 und v2 bleiben unverändert — v3 überschreibt nur Tokens und Komponenten,
-alles in denselben drei Dateien.
-
-## Design System v3
-
-**Signaturfarben (Light):**
-```css
---v3-sand: #fdf3e0    --v3-lagoon: #0f6e7a   --v3-sun: #ffc24b
---v3-sky:  #dceff2    --v3-deep:   #0a3b44   --v3-melon: #ff6f4e
---v3-foam: #fffdf7                            --v3-reed:  #7fa05a
-```
-
-**Dark:** Nacht-Lagune — `--bg: #08222a`, Karten `#0f333b`, Accent bleibt `#00d2ff`.
-
-Diese Werte werden auf die bestehenden Tokens (`--bg`, `--text`, `--accent` …)
-gemappt, damit Nav, Footer und Toggle ohne Sonderregeln mitlaufen.
-
-**Hintergrund:** Sonnen-Halo (radial, 78% / -12%) über Himmel→Sand→Foam-Verlauf,
-`background-attachment: fixed`.
-
-**Font:** `Fraunces` (variabel, opsz/wght/SOFT/WONK) für Heading und Kachel-Titel.
-Body bleibt Instrument Sans, Meta bleibt IBM Plex Mono.
-
-**Max-width:** 840px (statt 720px).
-
-## Komponenten v3
-
-- **Hero:** Eyebrow mit Haarlinie (`::after`, `flex:1`), zweizeiliges Fraunces-900-Heading
-  (`personal` / *`toolbox~`* kursiv in Lagoon), Standfirst 17px / 46ch, SVG-Welle darunter.
-- **Tool-Karten:** einspaltig, Grid `32px 1fr` (Icon links neben dem Titel),
-  5px Farbbalken links in `--tool-color`, Rise-Animation mit 45ms-Staffelung über `--i`.
-- **Stempel:** `.tool-status` wird absolut oben rechts positioniert, `rotate(-2.5deg)`,
-  Label „Status" via `::before`, Wert im `<b>`. Grün = live, Amber = in progress.
-- **Filter:** Pills (Alle / Steuer / Finanzen / Familie / Zuhause / Dev) über
-  `data-cat` auf den Karten, mit Live-Counter. Nur in v3 sichtbar.
-- **Stack-Block** wird zur Notiz-Box in `--v3-sky`.
-
-## Mechanik
-
-- Heading besteht aus zwei `[data-scramble]`-Spans, damit v1/v2 einzeilig und v3
-  zweizeilig gesetzt werden kann — der Scramble läuft über beide gleichzeitig.
-- `?design=v3` in der URL setzt die Variante und schreibt sie in localStorage.
-- Beim Wechsel weg von v3 werden alle Karten wieder gezeigt, die Filterauswahl
-  bleibt aber gemerkt (`renderCards(filter, remember)`).
+Aus dem letzten Review noch nicht umgesetzt:
+- **Accessibility:** `--text-tertiary` reißt AA (3.0–3.7:1 je Theme);
+  `:focus-visible` ist nirgends definiert; Touch-Targets in der Nav sind
+  bei 375px nur 15px hoch; `lang="de"`, aber Hero und Bio sind Englisch;
+  `user-select: none` auf dem `<h1>`
+- **`<head>`:** kein `<link rel="icon">` (`/favicon.ico` → 404), kein
+  `theme-color`, keine Open-Graph-/Canonical-Tags
+- **Theme:** OS-Wechsel greift erst beim Reload (kein `matchMedia`-Listener),
+  und nach dem ersten manuellen Toggle gibt es kein Zurück auf „System"
+- `onclick="toggleTheme()"` ist das einzige Inline-Handler-Relikt
+- `.grain` ist ein Viewport-großer `feTurbulence`-Filter — auf Mobile teuer;
+  ein vorgerendertes getiltes PNG wäre günstiger
+- Keine CI: ein Link-Checker und ein HTML-Validator auf Push wären hier
+  am wirksamsten

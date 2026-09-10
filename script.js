@@ -7,24 +7,48 @@ function toggleTheme() {
 }
 
 // === Live Clock (Vienna) ===
+// Das Zonenkürzel wird mitformatiert statt hardcodiert — Wien ist von Ende März
+// bis Ende Oktober CEST, nicht CET.
+
+var clockFormat = new Intl.DateTimeFormat('en-GB', {
+  timeZone: 'Europe/Vienna',
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: false,
+  timeZoneName: 'short'
+});
 
 function updateTime() {
-  var time = new Intl.DateTimeFormat('en-GB', {
-    timeZone: 'Europe/Vienna',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false
-  }).format(new Date());
-  var el = document.getElementById('current-time');
-  if (el) el.textContent = time;
+  var parts = clockFormat.formatToParts(new Date());
+  var time = '';
+  var zone = '';
+  parts.forEach(function(p) {
+    if (p.type === 'hour' || p.type === 'minute') time += (time ? ':' : '') + p.value;
+    else if (p.type === 'timeZoneName') zone = p.value;
+  });
+
+  var timeEl = document.getElementById('current-time');
+  if (timeEl && time) timeEl.textContent = time;
+  var zoneEl = document.getElementById('current-tz');
+  if (zoneEl && zone) zoneEl.textContent = zone;
 }
 
-updateTime();
-setInterval(updateTime, 60000);
+// Auf die Minutengrenze getaktet und nach jedem Tick neu gestellt: kein Drift,
+// und der angezeigte Wert ist nie älter als die laufende Minute.
+function scheduleClock() {
+  updateTime();
+  var now = new Date();
+  setTimeout(scheduleClock, (60 - now.getSeconds()) * 1000 - now.getMilliseconds());
+}
+
+scheduleClock();
+
+// === Copyright-Jahr ===
+
+var yearEl = document.getElementById('current-year');
+if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
 // === Scramble ===
-// Läuft über alle [data-scramble]-Wörter gleichzeitig, damit das Heading
-// in v1/v2 einzeilig und in v3 zweizeilig gesetzt werden kann.
 
 var POOL = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&*~+-=.:';
 var DURATION = 650;
@@ -89,14 +113,9 @@ if (heading) {
   heading.addEventListener('touchstart', scramble, { passive: true });
 }
 
-// === Tool-Filter (v3) ===
+// === Tool-Filter ===
 
-var activeFilter = 'all';
-
-// remember=false rendert nur (z. B. beim Verlassen von v3), ohne die Auswahl zu überschreiben
-function renderCards(filter, remember) {
-  if (remember) activeFilter = filter;
-
+function applyFilter(filter) {
   var cards = [].slice.call(document.querySelectorAll('.tool-card'));
   var grid = document.getElementById('tools-grid');
   var countEl = document.getElementById('tool-count');
@@ -124,39 +143,9 @@ function renderCards(filter, remember) {
   });
 }
 
-function applyFilter(filter) {
-  renderCards(filter, true);
-}
-
 document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('.tool-filters button').forEach(function(btn) {
     btn.addEventListener('click', function() { applyFilter(btn.dataset.filter); });
   });
   applyFilter('all');
-});
-
-// === Design Toggle ===
-
-function setDesign(design) {
-  document.documentElement.setAttribute('data-design', design);
-  try { localStorage.setItem('design', design); } catch(e) {}
-  updateDesignButtons();
-  // Filter gibt es nur in v3 — beim Verlassen alles zeigen, Auswahl aber merken
-  renderCards(design === 'v3' ? activeFilter : 'all', false);
-}
-
-function updateDesignButtons() {
-  var current = document.documentElement.getAttribute('data-design') || 'v1';
-  document.querySelectorAll('.design-toggle button').forEach(function(btn) {
-    var isActive = btn.dataset.design === current;
-    btn.classList.toggle('active', isActive);
-    btn.setAttribute('aria-pressed', String(isActive));
-  });
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-  document.querySelectorAll('.design-toggle button').forEach(function(btn) {
-    btn.addEventListener('click', function() { setDesign(btn.dataset.design); });
-  });
-  updateDesignButtons();
 });
