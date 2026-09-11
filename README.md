@@ -17,6 +17,7 @@ No framework, no build step, no dependencies.
 - `index.html` — page structure and the tool cards (this is where the tool URLs live)
 - `styles.css` — design tokens, layout, components, dark mode, responsive
 - `script.js` — dark mode toggle, live Vienna clock, scramble heading, tool filter
+- `favicon.svg` — tab icon, follows the browser's light/dark setting
 - `CNAME` — custom domain
 
 ## Features
@@ -29,6 +30,9 @@ No framework, no build step, no dependencies.
 - **Scramble heading** — plain JS on the `<h1>`, skipped under
   `prefers-reduced-motion`.
 - **Live clock** for Vienna, including the correct CET/CEST abbreviation.
+- **Share previews** — Open Graph tags, so pasting the link into a chat shows a
+  card instead of a bare URL. The mobile browser bar is tinted to match the
+  active theme via `theme-color`.
 
 ## Local use
 

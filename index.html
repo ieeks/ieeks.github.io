@@ -5,7 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>manuels toolbox</title>
   <meta name="description" content="Personal toolbox by Manuel, Vienna.">
+  <link rel="canonical" href="https://manuel.tools/">
+
+  <!-- Icons — SVG zuerst, PNG als Fallback für Browser ohne SVG-Favicon -->
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="alternate icon" href="apple-touch-icon.png" type="image/png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+  <!-- Farbe der Browser-Leiste. Bewusst OHNE media-Query: das Theme hängt an
+       data-theme/localStorage und kann von der OS-Einstellung abweichen. Den
+       Wert setzen darum Init-Script und toggleTheme() passend zum wirklich
+       gerenderten Theme. Muss zu --bg in styles.css passen. -->
+  <meta name="theme-color" content="#eee8db">
+
+  <!-- Link-Vorschau (WhatsApp, iMessage, Slack …). Das Bild ist 540×540,
+       also quadratisch — deshalb summary und nicht summary_large_image. -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://manuel.tools/">
+  <meta property="og:title" content="manuels toolbox">
+  <meta property="og:description" content="Personal toolbox by Manuel, Vienna.">
+  <meta property="og:image" content="https://manuel.tools/apple-touch-icon.png">
+  <meta property="og:image:alt" content="ie — Monogramm">
+  <meta name="twitter:card" content="summary">
+
   <!-- 1. Dark Mode Init — MUSS vor CSS kommen, blocking -->
   <script>
     (function() {
@@ -13,6 +35,8 @@
       try { saved = localStorage.getItem('theme'); } catch(e) {}
       if (!saved) saved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
       document.documentElement.setAttribute('data-theme', saved);
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute('content', saved === 'dark' ? '#1e2024' : '#eee8db');
     })();
   </script>
   <!-- 2. Fonts -->
@@ -336,6 +360,6 @@
   </div>
 </footer>
 
-<script src="script.js?v=4"></script>
+<script src="script.js?v=5"></script>
 </body>
 </html>

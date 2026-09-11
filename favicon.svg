@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="ie">
+  <!-- Folgt der Browser-/OS-Einstellung, nicht dem data-theme der Seite:
+       das Favicon sitzt in der Tab-Leiste, und die färbt sich nach dem OS. -->
+  <style>
+    .plate { fill: #c44b28 }
+    .mark  { fill: #ffffff }
+    @media (prefers-color-scheme: dark) {
+      .plate { fill: #00d2ff }
+      .mark  { fill: #1e2024 }
+    }
+  </style>
+  <rect class="plate" width="100" height="100" rx="22"/>
+  <!-- Bewusst größer und kräftiger als im Nav-Logo: dünne Serifen
+       verschwinden in der Tab-Leiste bei 16px. -->
+  <text class="mark" x="50" y="75" text-anchor="middle"
+        font-family="Georgia, 'Times New Roman', serif" font-size="70" font-weight="600">ie</text>
+</svg>
