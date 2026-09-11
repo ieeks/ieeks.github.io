@@ -11,6 +11,7 @@ index.html    ← Seitenstruktur
 styles.css    ← Tokens, Layout, Komponenten, Dark Mode, Responsive
 script.js     ← Dark Mode Toggle, Live-Uhrzeit, Scramble-Effekt, Tool-Filter
 CNAME         ← manuel.tools
+favicon.svg   ← Tab-Icon, folgt prefers-color-scheme
 apple-touch-icon.png
 ```
 
@@ -93,11 +94,17 @@ Theme via `data-theme` Attribut auf `<html>`.
   try { saved = localStorage.getItem('theme'); } catch(e) {}
   if (!saved) saved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   document.documentElement.setAttribute('data-theme', saved);
+  var meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', saved === 'dark' ? '#1e2024' : '#eee8db');
 })();
 ```
 
 `localStorage` immer in `try/catch` — sonst wirft es im Private Mode und bei
 blockierten Site-Daten.
+
+Das `theme-color`-Meta muss im `<head>` **vor** diesem Script stehen, sonst
+findet `querySelector` es noch nicht. Details unter „Icons, theme-color,
+Link-Vorschau".
 
 ---
 
@@ -236,6 +243,36 @@ bekommen wiederkehrende Besucher eine gemischte Version.
 
 ---
 
+## Icons, theme-color, Link-Vorschau
+
+**Favicon:** `favicon.svg` — gefülltes Quadrat in `--accent` mit `ie`-Monogramm.
+Bewusst *nicht* das Nav-Logo 1:1: dessen 3px-Kontur und dünne Serifen lösen sich
+in der Tab-Leiste bei 16px auf, darum hier volle Fläche und `font-weight: 600`.
+Die Farben schalten per `prefers-color-scheme` **im SVG selbst** — das Favicon
+sitzt in der Browser-Chrome, die dem OS folgt, nicht dem `data-theme` der Seite.
+`apple-touch-icon.png` (540×540) dient als `alternate icon` für Browser ohne
+SVG-Favicon und weiterhin als iOS-Homescreen-Icon.
+
+**theme-color** färbt die Browser-Leiste auf Mobilgeräten. Ein einziges Tag
+**ohne** `media`-Query, denn das Theme hängt an `data-theme`/`localStorage` und
+kann von der OS-Einstellung abweichen — zwei media-gescopte Tags würden bei
+manuell umgeschaltetem Theme den falschen Wert zeigen. Stattdessen setzen
+Init-Script und `toggleTheme()` den Wert auf das wirklich gerenderte Theme.
+
+> Der Farbwert steht dadurch an **drei** Stellen: `--bg` in `styles.css`, im
+> Init-Script in `index.html` und in `THEME_COLOR` in `script.js`. Nicht schön,
+> aber nicht vermeidbar — das Init-Script muss inline und blockierend laufen,
+> also bevor `script.js` geladen ist. Bei einer Änderung an `--bg` alle drei
+> mitziehen.
+
+**Open Graph** für Link-Vorschauen in WhatsApp, iMessage, Slack. Als Bild dient
+`apple-touch-icon.png`; weil das quadratisch ist, steht `twitter:card` auf
+`summary` (kleine Kachel) und nicht auf `summary_large_image` — letzteres
+erwartet ein Querformat um 1200×630 und würde das Quadrat hässlich beschneiden.
+Wer eine große Vorschaukarte will, muss zuerst ein solches Bild anlegen.
+
+---
+
 ## GitHub Pages Deploy
 Kein Build-Step. `index.html` im Root → wird direkt ausgeliefert.
 
@@ -260,8 +297,6 @@ Aus dem letzten Review noch nicht umgesetzt:
   `:focus-visible` ist nirgends definiert; Touch-Targets in der Nav sind
   bei 375px nur 15px hoch; `lang="de"`, aber Hero und Bio sind Englisch;
   `user-select: none` auf dem `<h1>`
-- **`<head>`:** kein `<link rel="icon">` (`/favicon.ico` → 404), kein
-  `theme-color`, keine Open-Graph-/Canonical-Tags
 - **Theme:** OS-Wechsel greift erst beim Reload (kein `matchMedia`-Listener),
   und nach dem ersten manuellen Toggle gibt es kein Zurück auf „System"
 - `onclick="toggleTheme()"` ist das einzige Inline-Handler-Relikt

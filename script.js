@@ -1,8 +1,15 @@
 // === Theme ===
 
+// Muss zu --bg in styles.css und zum Init-Script im <head> passen. Die
+// Dopplung ist nicht zu vermeiden: das Init-Script muss inline und blockierend
+// laufen, also bevor diese Datei geladen ist.
+var THEME_COLOR = { light: '#eee8db', dark: '#1e2024' };
+
 function toggleTheme() {
   var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', next);
+  var meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', THEME_COLOR[next]);
   try { localStorage.setItem('theme', next); } catch(e) {}
 }
 
