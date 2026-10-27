@@ -55,3 +55,7 @@ pages under `manuel.tools/<repo>/`. This repository holds only the landing page.
 
 See `CLAUDE.md` for the design tokens, the page structure, and the list of
 known open issues.
+
+### mietklar.
+
+[mietklar.](https://manuel.tools/mietklar/) is listed in the tax and money filters (live alpha). Its source and deployment remain in [`ieeks/mietklar`](https://github.com/ieeks/mietklar); this landing page links directly to its project page.

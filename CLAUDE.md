@@ -129,7 +129,7 @@ für den aktiven Zustand.
 
 ### Tools Grid (2 Spalten, ≤520px einspaltig)
 
-Aktuell 12 Karten als `<a>`-Tags. Alle Links zeigen auf `manuel.tools/…` —
+Aktuell 13 Karten als `<a>`-Tags. Alle Links zeigen auf `manuel.tools/…` —
 nicht auf `ieeks.github.io/…`, das wäre ein zusätzlicher Redirect-Hop.
 
 | Name | Type | Pfad | Status | `data-cat` |
@@ -141,6 +141,7 @@ nicht auf `ieeks.github.io/…`, das wäre ein zusätzlicher Redirect-Hop.
 | Sublist | Personal · Subscription Tracking | `/sublist-web/` | live | `money` |
 | Familienbonus | AT Steuer · Aufteilungsrechner | `/familienbonus/` | live | `tax family` |
 | Ortstaxe Wien | AT Steuer · Airbnb Meldung | `/ortstaxe-wien/` | live | `tax money` |
+| mietklar. | Vermietung · Überschussrechner | `/mietklar/` | live · Alpha | `tax money` |
 | ETF Rechner | Invest · Sparplan Kalkulator | `/etf-rechner/` | live | `money` |
 | Finance Dashboard | Banking · PDF Import · AI | `/finance-dashboard/` | in progress | `money` |
 | Wanderly | Family · Travel Dashboard | `/wanderly/` | live | `family` |
