@@ -59,3 +59,7 @@ known open issues.
 ### mietklar.
 
 [mietklar.](https://manuel.tools/mietklar/) is listed in the tax and money filters (live alpha). Its source and deployment remain in [`ieeks/mietklar`](https://github.com/ieeks/mietklar); this landing page links directly to its project page.
+
+### Mobile rendering
+
+On touch devices (no hover) and viewports up to 768px, the full-screen grain filter is hidden and tool cards appear without entrance animation. Desktop effects remain available. This reduces rendering effects; actual iPhone scrolling should be checked on-device.

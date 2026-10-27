@@ -183,7 +183,7 @@ versetzten Schatten, der einheitlich `--accent` nutzt.
 
 ### Overlays
 `.grain` (SVG `feTurbulence`, fixed, `opacity: 0.25`) und die beiden
-`.crop-mark`-Kreuze oben. Beide immer sichtbar — früher waren sie v2-exklusiv.
+`.crop-mark`-Kreuze oben. Körnung nur auf breiten Geräten mit Hover; auf Touch-Geräten und bis 768px ausgeblendet. Crop-Marks bleiben sichtbar.
 
 ---
 
@@ -301,7 +301,11 @@ Aus dem letzten Review noch nicht umgesetzt:
 - **Theme:** OS-Wechsel greift erst beim Reload (kein `matchMedia`-Listener),
   und nach dem ersten manuellen Toggle gibt es kein Zurück auf „System"
 - `onclick="toggleTheme()"` ist das einzige Inline-Handler-Relikt
-- `.grain` ist ein Viewport-großer `feTurbulence`-Filter — auf Mobile teuer;
-  ein vorgerendertes getiltes PNG wäre günstiger
+- `.grain` nutzt auf Desktop weiter einen Viewport-großen `feTurbulence`-Filter.
+  Auf Geräten ohne Hover und bis 768px sind Körnung und Kachel-Einblendung seit 27.10.2026 deaktiviert; eine statische Textur wäre eine spätere Alternative für Desktop.
 - Keine CI: ein Link-Checker und ein HTML-Validator auf Push wären hier
   am wirksamsten
+
+## Mobile Performance · 27.10.2026
+
+`@media (max-width: 768px), (hover: none)` blendet `.grain` vollständig aus und setzt `.tool-card { animation: none; }`. Kacheln sind sofort sichtbar, auch nach Filtern. Desktop-Effekte bleiben erhalten. CSS-URL auf `styles.css?v=5` erhöht. Wirkung auf echten iPhone-Bildaufbau/Scrollen noch vom Nutzer zu prüfen; keine gemessene Beschleunigung behaupten.

@@ -603,3 +603,15 @@ footer {
     padding: 1.5rem 1.4rem 1.3rem;
   }
 }
+
+/* Touch devices and narrow viewports: avoid the full-screen noise filter
+   and show cards immediately, including after category changes. */
+@media (max-width: 768px), (hover: none) {
+  .grain {
+    display: none;
+  }
+
+  .tool-card {
+    animation: none;
+  }
+}
