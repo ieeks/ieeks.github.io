@@ -129,7 +129,7 @@ für den aktiven Zustand.
 
 ### Tools Grid (2 Spalten, ≤520px einspaltig)
 
-Aktuell 13 Karten als `<a>`-Tags. Alle Links zeigen auf `manuel.tools/…` —
+Aktuell 14 Karten als `<a>`-Tags. Alle Links zeigen auf `manuel.tools/…` —
 nicht auf `ieeks.github.io/…`, das wäre ein zusätzlicher Redirect-Hop.
 
 | Name | Type | Pfad | Status | `data-cat` |
@@ -138,7 +138,7 @@ nicht auf `ieeks.github.io/…`, das wäre ein zusätzlicher Redirect-Hop.
 | Wallbox | EV Charging · Firebase | `/wallbox/` | live | `home` |
 | LEGO Tracker | Family · Wishlist | `/lego-tracker/` | live | `family` |
 | Energy Dashboard | Home · Analytics | `/gmail-pdf-sync/` | live | `home` |
-| Sublist | Personal · Subscription Tracking | `/sublist-web/` | live | `money` |
+| Filament Shelf | 3D Printing · Filament Inventory | `/filament-shelf/` | live | `home` |
 | Familienbonus | AT Steuer · Aufteilungsrechner | `/familienbonus/` | live | `tax family` |
 | Ortstaxe Wien | AT Steuer · Airbnb Meldung | `/ortstaxe-wien/` | live | `tax money` |
 | mietklar. | Vermietung · Überschussrechner | `/mietklar/` | live · Alpha | `tax money` |
@@ -147,6 +147,7 @@ nicht auf `ieeks.github.io/…`, das wäre ein zusätzlicher Redirect-Hop.
 | Wanderly | Family · Travel Dashboard | `/wanderly/` | live | `family` |
 | API Key Manager | Dev · Key Vault | `/apikey-app/` | in progress | `dev` |
 | SnipVault | Dev · Snippet Manager | `/snipvault/` | live | `dev` |
+| Sublist | Personal · Subscription Tracking | `/sublist-web/` | live | `money` |
 
 > **Achtung, sieht wie ein Bug aus, ist keiner:** „Energy Dashboard" zeigt auf
 > `/gmail-pdf-sync/`. Ein Repo `energy-dashboard` existiert nicht — das Tool

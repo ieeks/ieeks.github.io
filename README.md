@@ -63,3 +63,7 @@ known open issues.
 ### Mobile rendering
 
 On touch devices (no hover) and viewports up to 768px, the full-screen grain filter is hidden and tool cards appear without entrance animation. Desktop effects remain available. This reduces rendering effects; actual iPhone scrolling should be checked on-device.
+
+### Filament Shelf
+
+[Filament Shelf](https://manuel.tools/filament-shelf/) is listed in the home filter, at Sublist's former position. Sublist is now the last tool card. Filament Shelf's source and deployment remain in [`ieeks/filament-shelf`](https://github.com/ieeks/filament-shelf).
