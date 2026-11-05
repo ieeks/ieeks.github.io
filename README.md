@@ -27,6 +27,7 @@ No framework, no build step, no dependencies.
   `<head>` so there is no flash of the wrong theme.
 - **Tool filter** — category pills (`all`/`tax`/`money`/`family`/`home`/`dev`)
   driven by `data-cat` on the cards, with a live count.
+- **Personal tool order** — cards are sorted by your locally saved click counts on page load. Ties keep the HTML order. Normal clicks, touch/Enter activation, Ctrl/Cmd-click and middle-click count; right-click does not. Cards stay in place while clicking or filtering. Counts start with this feature and are stored only in this browser under `toolbox:tool-clicks:v1`; there is no device sync or server analytics. Clearing site data resets the order. If storage is unavailable, links and filters still work.
 - **Scramble heading** — plain JS on the `<h1>`, skipped under
   `prefers-reduced-motion`.
 - **Live clock** for Vienna, including the correct CET/CEST abbreviation.
@@ -66,4 +67,8 @@ On touch devices (no hover) and viewports up to 768px, the full-screen grain fil
 
 ### Filament Shelf
 
-[Filament Shelf](https://manuel.tools/filament-shelf/) is listed in the home filter, at Sublist's former position. Sublist is now the last tool card. Filament Shelf's source and deployment remain in [`ieeks/filament-shelf`](https://github.com/ieeks/filament-shelf).
+[Filament Shelf](https://manuel.tools/filament-shelf/) is listed in the home filter, at Sublist's former position in the default HTML order. Sublist is the last tool card in that default order; local click counts can move either card up. Filament Shelf's source and deployment remain in [`ieeks/filament-shelf`](https://github.com/ieeks/filament-shelf).
+
+### Click ranking checks
+
+Run `node --test tests/tool-ranking.test.cjs` with Node.js. The dependency-free checks execute the page script against a minimal DOM/storage fixture and cover ranking, ties, activation types, filtering, invalid data, blocked storage and cross-tab rereads. They are functional checks, not a full browser test.

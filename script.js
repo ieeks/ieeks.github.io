@@ -120,6 +120,71 @@ if (heading) {
   heading.addEventListener('touchstart', scramble, { passive: true });
 }
 
+// === Persönliche Reihenfolge nach Tool-Klicks ===
+
+// Nur lokale Klickzahlen; keine Übertragung an einen Server.
+var TOOL_CLICK_STORAGE_KEY = 'toolbox:tool-clicks:v1';
+var toolClickCounts = Object.create(null);
+
+function readToolClicks() {
+  try {
+    var parsed = JSON.parse(localStorage.getItem(TOOL_CLICK_STORAGE_KEY) || '{}');
+    var counts = Object.create(null);
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+      Object.keys(parsed).forEach(function(key) {
+        var value = parsed[key];
+        if (Number.isSafeInteger(value) && value >= 0) counts[key] = value;
+      });
+    }
+    return counts;
+  } catch (e) {
+    return toolClickCounts;
+  }
+}
+
+function toolClickKey(card) {
+  return card.getAttribute('href');
+}
+
+function recordToolClick(card) {
+  // Vor jedem Schreiben neu lesen, damit andere offene Tabs berücksichtigt werden.
+  toolClickCounts = readToolClicks();
+  var key = toolClickKey(card);
+  toolClickCounts[key] = Math.min(
+    (toolClickCounts[key] || 0) + 1,
+    Number.MAX_SAFE_INTEGER
+  );
+  try {
+    localStorage.setItem(TOOL_CLICK_STORAGE_KEY, JSON.stringify(toolClickCounts));
+  } catch (e) {
+    // Bei blockiertem Speicher funktionieren Links und Filter weiter.
+  }
+}
+
+function initToolRanking() {
+  var grid = document.getElementById('tools-grid');
+  if (!grid) return;
+  toolClickCounts = readToolClicks();
+  var ranked = [].slice.call(grid.querySelectorAll('.tool-card')).map(function(card, index) {
+    return { card: card, index: index, clicks: toolClickCounts[toolClickKey(card)] || 0 };
+  });
+  ranked.sort(function(a, b) {
+    return b.clicks - a.clicks || a.index - b.index;
+  });
+  ranked.forEach(function(entry) {
+    grid.appendChild(entry.card);
+    entry.card.addEventListener('click', function(event) {
+      // Normaler Klick, Touch, Enter sowie Strg-/Cmd-Klick.
+      if (!event.defaultPrevented && event.button === 0) recordToolClick(entry.card);
+    });
+    entry.card.addEventListener('auxclick', function(event) {
+      // Mittelklick zählt, das Öffnen des Kontextmenüs nicht.
+      if (!event.defaultPrevented && event.button === 1) recordToolClick(entry.card);
+    });
+  });
+  // Nur beim Laden sortieren, damit beim Klicken keine Kacheln wegspringen.
+}
+
 // === Tool-Filter ===
 
 function applyFilter(filter) {
@@ -151,6 +216,7 @@ function applyFilter(filter) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+  initToolRanking();
   document.querySelectorAll('.tool-filters button').forEach(function(btn) {
     btn.addEventListener('click', function() { applyFilter(btn.dataset.filter); });
   });

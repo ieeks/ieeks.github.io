@@ -127,6 +127,12 @@ Eine Karte kann mehrere Kategorien tragen (space-separiert, z. B. `data-cat="tax
 `aria-pressed` wird von `applyFilter()` gesetzt und ist zugleich der CSS-Hook
 für den aktiven Zustand.
 
+### Persönliche Klick-Sortierung
+
+`initToolRanking()` sortiert die Karten einmal beim Laden nach lokal gespeicherter Klickzahl absteigend. Bei Gleichstand gilt die HTML-Reihenfolge der folgenden Tabelle. Es gibt keine automatische Umsortierung beim Klicken oder Filtern, damit Position und Tastaturfokus stabil bleiben.
+
+Zähler: `localStorage['toolbox:tool-clicks:v1']`, Schlüssel je Tool ist dessen `href`. Normale Klicks (auch Touch/Enter und Strg-/Cmd-Klick) sowie Mittelklick werden erfasst, Rechtsklick nicht. Vor dem Schreiben wird der aktuelle Speicherstand gelesen. Ungültige Werte werden ignoriert, Speicherzugriffe sind in `try/catch`. Keine Übertragung und kein geräteübergreifender Abgleich; bisherige Klicks sind unbekannt. Website-Daten löschen setzt die Zähler zurück.
+
 ### Tools Grid (2 Spalten, ≤520px einspaltig)
 
 Aktuell 14 Karten als `<a>`-Tags. Alle Links zeigen auf `manuel.tools/…` —
