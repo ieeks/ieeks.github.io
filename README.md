@@ -72,3 +72,7 @@ On touch devices (no hover) and viewports up to 768px, the full-screen grain fil
 ### Click ranking checks
 
 Run `node --test tests/tool-ranking.test.cjs` with Node.js. The dependency-free checks execute the page script against a minimal DOM/storage fixture and cover ranking, ties, activation types, filtering, invalid data, blocked storage and cross-tab rereads. They are functional checks, not a full browser test.
+
+### Vienna Christmas Markets
+
+[Vienna Christmas Markets 2026](https://manuel.tools/xmas/) is listed in the family filter. The guide lives in [`ieeks/xmas`](https://github.com/ieeks/xmas), published from the root `index.html` through GitHub Pages. The card uses the existing local click ranking.

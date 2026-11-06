@@ -135,7 +135,7 @@ Zähler: `localStorage['toolbox:tool-clicks:v1']`, Schlüssel je Tool ist dessen
 
 ### Tools Grid (2 Spalten, ≤520px einspaltig)
 
-Aktuell 14 Karten als `<a>`-Tags. Alle Links zeigen auf `manuel.tools/…` —
+Aktuell 15 Karten als `<a>`-Tags. Alle Links zeigen auf `manuel.tools/…` —
 nicht auf `ieeks.github.io/…`, das wäre ein zusätzlicher Redirect-Hop.
 
 | Name | Type | Pfad | Status | `data-cat` |
@@ -153,6 +153,7 @@ nicht auf `ieeks.github.io/…`, das wäre ein zusätzlicher Redirect-Hop.
 | Wanderly | Family · Travel Dashboard | `/wanderly/` | live | `family` |
 | API Key Manager | Dev · Key Vault | `/apikey-app/` | in progress | `dev` |
 | SnipVault | Dev · Snippet Manager | `/snipvault/` | live | `dev` |
+| Vienna Christmas Markets | Family · Vienna · Advent 2026 | `/xmas/` | live | `family` |
 | Sublist | Personal · Subscription Tracking | `/sublist-web/` | live | `money` |
 
 > **Achtung, sieht wie ein Bug aus, ist keiner:** „Energy Dashboard" zeigt auf
